@@ -4,7 +4,7 @@ import { MapPin, Clock, Car, Users, Heart } from "lucide-react"
 
 export const metadata = {
   title: "Visit Us | RCCG Shiloh Mega Parish",
-  description: "Plan your visit to RCCG Shiloh Mega Parish in Richmond, Texas. Get directions, parking information, and learn what to expect.",
+  description: "Plan your visit to RCCG Shiloh Mega Parish in Sugar Land, Texas. Get directions, parking information, and learn what to expect.",
 }
 
 export default function VisitPage() {
@@ -24,12 +24,12 @@ export default function VisitPage() {
               <MapPin className="h-5 w-5 text-primary" />
               <CardTitle>Our Location</CardTitle>
             </div>
-            <CardDescription>Shiloh Mega Parish, Richmond, Texas</CardDescription>
+            <CardDescription>Shiloh Mega Parish, Sugar Land, Texas</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="aspect-video w-full overflow-hidden rounded-lg bg-muted">
               <iframe
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3464.5!2d-95.76!3d29.58!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMjnCsDM0JzQ4LjAiTiA5NcKwNDUnMzYuMCJX!5e0!3m2!1sen!2sus!4v1234567890"
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3466.1!2d-95.6089!3d29.5377!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8640e5d5d5d5d5d5%3A0x0!2s10130+Belknap+Rd%2C+Sugar+Land%2C+TX+77478!5e0!3m2!1sen!2sus!4v1703000000000"
                 width="100%"
                 height="100%"
                 style={{ border: 0 }}
@@ -42,8 +42,16 @@ export default function VisitPage() {
             <div className="mt-4 space-y-2">
               <p className="font-medium">Address</p>
               <p className="text-muted-foreground">
-                Shiloh Mega Parish<br />
-                Richmond, TX 77469
+                10130 Belknap Rd<br />
+                Sugar Land, TX 77478
+              </p>
+              <p className="font-medium mt-4">Phone</p>
+              <p className="text-muted-foreground">
+                <a href="tel:281-840-1614" className="hover:text-primary">(281) 840-1614</a>
+              </p>
+              <p className="font-medium mt-4">Email</p>
+              <p className="text-muted-foreground">
+                <a href="mailto:churchoffice@rccgshilohmega.org" className="hover:text-primary">churchoffice@rccgshilohmega.org</a>
               </p>
             </div>
           </CardContent>

@@ -15,19 +15,21 @@ export function HeroSection() {
     >
       {/* Full-width background image */}
       <motion.div
-        className="absolute inset-0 z-0"
+        className="absolute inset-0 z-0 overflow-hidden"
         initial={{ scale: 1.1 }}
         animate={{ scale: 1 }}
         transition={{ duration: 1.5, ease: "easeOut" }}
       >
-        <Image
-          src="/images/churchHomepage.avif"
-          alt="RCCG Shiloh Mega Parish - A place of salvation and hope"
-          fill
-          className="object-cover"
-          priority
-          quality={90}
-        />
+        <div className="absolute inset-0">
+          <Image
+            src="/images/churchHomepage.avif"
+            alt="RCCG Shiloh Mega Parish - A place of salvation and hope"
+            fill
+            className="object-cover object-[35%_center] md:object-center"
+            priority
+            quality={90}
+          />
+        </div>
         {/* Lighter overlay to let image show through more */}
         <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/40 to-black/60" />
       </motion.div>
@@ -87,28 +89,32 @@ export function HeroSection() {
         </div>
       </div>
 
-      <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-background to-transparent z-10" />
-      
-      {/* Scroll indicator arrow */}
+      {/* Scroll indicator arrow - positioned above gradient */}
       <motion.div
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8, delay: 1 }}
-        className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20"
+        className="absolute bottom-12 sm:bottom-8 left-1/2 -translate-x-1/2 z-30 pointer-events-auto"
       >
         <motion.div
-          animate={{ y: [0, 10, 0] }}
+          animate={{ y: [0, 8, 0] }}
           transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-          className="flex flex-col items-center gap-2 cursor-pointer group"
+          className="flex flex-col items-center gap-1 sm:gap-2 cursor-pointer group"
           onClick={() => {
             window.scrollTo({ top: window.innerHeight, behavior: 'smooth' })
           }}
           aria-label="Scroll down"
         >
-          <span className="text-xs sm:text-sm text-white/80 font-medium hidden sm:block">Scroll</span>
-          <ChevronDown className="h-6 w-6 sm:h-8 sm:w-8 text-white/90 group-hover:text-white transition-colors" />
+          <span className="text-xs sm:text-sm text-white font-medium hidden sm:block drop-shadow-md">Scroll</span>
+          <div className="relative flex items-center justify-center p-2">
+            <div className="absolute inset-0 bg-white/30 rounded-full blur-lg"></div>
+            <div className="absolute inset-0 bg-black/60 rounded-full"></div>
+            <ChevronDown className="relative h-10 w-10 sm:h-12 sm:w-12 text-white drop-shadow-[0_2px_12px_rgba(0,0,0,1)] group-hover:text-white/90 transition-colors z-10" strokeWidth={3} />
+          </div>
         </motion.div>
       </motion.div>
+      
+      <div className="absolute bottom-0 left-0 right-0 h-16 sm:h-24 bg-gradient-to-t from-background to-transparent z-10" />
     </section>
   )
 }

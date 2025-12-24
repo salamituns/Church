@@ -10,6 +10,8 @@ import type { Ministry } from "@/lib/cms/types"
 interface NavigationProps {
   className?: string
   ministries?: Ministry[]
+  onLinkClick?: () => void
+  mobile?: boolean
 }
 
 const navItems = [
@@ -20,7 +22,7 @@ const navItems = [
   { href: "/sermons", label: "Sermons" },
 ]
 
-export function Navigation({ className, ministries = [] }: NavigationProps) {
+export function Navigation({ className, ministries = [], onLinkClick, mobile = false }: NavigationProps) {
   const pathname = usePathname()
 
   return (
@@ -31,6 +33,7 @@ export function Navigation({ className, ministries = [] }: NavigationProps) {
           <Link
             key={item.href}
             href={item.href}
+            onClick={onLinkClick}
             className={cn(
               "text-sm font-medium transition-colors hover:text-primary relative",
               isActive ? "text-primary" : "text-muted-foreground"
@@ -48,11 +51,12 @@ export function Navigation({ className, ministries = [] }: NavigationProps) {
         )
       })}
       {ministries.length > 0 && (
-        <NavigationDropdown ministries={ministries} />
+        <NavigationDropdown ministries={ministries} onLinkClick={onLinkClick} mobile={mobile} />
       )}
       {ministries.length === 0 && (
         <Link
           href="/ministries"
+          onClick={onLinkClick}
           className={cn(
             "text-sm font-medium transition-colors hover:text-primary",
             pathname?.startsWith("/ministries") ? "text-primary" : "text-muted-foreground"

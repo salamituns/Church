@@ -8,18 +8,18 @@ import { getMinistries } from "@/lib/cms/queries"
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "RCCG Shiloh Mega Parish | Richmond TX Worship & Ministries",
-  description: "Welcome to RCCG Shiloh Mega Parish in Richmond, Texas. Join us for worship, fellowship, and community.",
-  keywords: ["church", "Richmond TX", "RCCG", "worship", "ministries", "community"],
+  title: "RCCG Shiloh Mega Parish | Sugar Land TX Worship & Ministries",
+  description: "Welcome to RCCG Shiloh Mega Parish in Sugar Land, Texas. Join us for worship, fellowship, and community.",
+  keywords: ["church", "Sugar Land TX", "RCCG", "worship", "ministries", "community"],
   openGraph: {
-    title: "RCCG Shiloh Mega Parish | Richmond TX Worship & Ministries",
-    description: "Welcome to RCCG Shiloh Mega Parish in Richmond, Texas. Join us for worship, fellowship, and community.",
+    title: "RCCG Shiloh Mega Parish | Sugar Land TX Worship & Ministries",
+    description: "Welcome to RCCG Shiloh Mega Parish in Sugar Land, Texas. Join us for worship, fellowship, and community.",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
     title: "RCCG Shiloh Mega Parish",
-    description: "Welcome to RCCG Shiloh Mega Parish in Richmond, Texas.",
+    description: "Welcome to RCCG Shiloh Mega Parish in Sugar Land, Texas.",
   },
 }
 

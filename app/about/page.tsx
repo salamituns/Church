@@ -25,7 +25,7 @@ export default async function AboutPage() {
             <h2 className="mb-4 text-2xl font-semibold">Our Mission</h2>
             <p className="mb-6 text-muted-foreground">
               RCCG Shiloh Mega Parish is committed to spreading the gospel, building 
-              a strong community of believers, and serving our neighbors in Richmond, 
+              a strong community of believers, and serving our neighbors in Sugar Land, 
               Texas and beyond. We believe in the power of faith, fellowship, and 
               service to transform lives.
             </p>

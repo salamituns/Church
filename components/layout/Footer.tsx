@@ -12,8 +12,13 @@ export function Footer() {
           <div className="space-y-4">
             <h3 className="text-lg font-semibold">RCCG Shiloh Mega Parish</h3>
             <p className="text-sm text-muted-foreground">
-              A place to belong, grow, and serve in Richmond, Texas.
+              A place to belong, grow, and serve in Sugar Land, Texas.
             </p>
+            <div className="text-sm text-muted-foreground space-y-1">
+              <p>10130 Belknap Rd, Sugar Land, TX 77478</p>
+              <p><a href="tel:281-840-1614" className="hover:text-primary">(281) 840-1614</a></p>
+              <p><a href="mailto:churchoffice@rccgshilohmega.org" className="hover:text-primary">churchoffice@rccgshilohmega.org</a></p>
+            </div>
           </div>
 
           <div className="space-y-4">
@@ -67,7 +72,7 @@ export function Footer() {
             <h4 className="text-sm font-semibold">Follow Us</h4>
             <div className="flex gap-4">
               <a
-                href="https://facebook.com"
+                href="https://www.facebook.com/share/17mTv7kDSU/?mibextid=wwXIfr"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-muted-foreground hover:text-primary"
@@ -76,7 +81,7 @@ export function Footer() {
                 <Facebook className="h-5 w-5" />
               </a>
               <a
-                href="https://instagram.com"
+                href="https://www.instagram.com/shilohmegaparish?igsh=MW9yb3JtN3JsbnU2eQ=="
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-muted-foreground hover:text-primary"
@@ -85,7 +90,7 @@ export function Footer() {
                 <Instagram className="h-5 w-5" />
               </a>
               <a
-                href="https://youtube.com"
+                href="https://youtube.com/@rccgshilohmega?si=khEGz7UwOhEIYl-2"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-muted-foreground hover:text-primary"

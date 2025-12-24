@@ -55,7 +55,7 @@ export function LatestSermon({ sermon }: LatestSermonProps) {
                 </div>
               )}
 
-              <CardContent className="flex flex-col justify-center p-5 sm:p-6 md:p-8 w-[530px]">
+              <CardContent className="flex flex-col justify-center p-5 sm:p-6 md:p-8 w-full md:max-w-[530px]">
                 {sermon.series && (
                   <p className="mb-2 text-xs sm:text-sm font-semibold text-primary">{sermon.series}</p>
                 )}
@@ -75,9 +75,9 @@ export function LatestSermon({ sermon }: LatestSermonProps) {
                   )}
                 </div>
 
-                <div className="flex flex-col gap-2.5 sm:gap-3 sm:flex-row">
+                <div className="flex flex-col gap-2.5 sm:gap-3 sm:flex-row sm:flex-wrap sm:justify-center">
                   {sermon.videoUrl && (
-                    <Button asChild size="lg" className="flex-1 text-sm sm:text-base touch-manipulation">
+                    <Button asChild size="lg" className="w-full sm:w-auto sm:flex-1 text-sm sm:text-base touch-manipulation justify-center">
                       <a href={sermon.videoUrl} target="_blank" rel="noopener noreferrer">
                         <Play className="mr-2 h-3.5 w-3.5 sm:h-4 sm:w-4" />
                         Watch Video
@@ -85,14 +85,14 @@ export function LatestSermon({ sermon }: LatestSermonProps) {
                     </Button>
                   )}
                   {sermon.audioUrl && (
-                    <Button asChild size="lg" variant="outline" className="flex-1 text-sm sm:text-base touch-manipulation">
+                    <Button asChild size="lg" variant="outline" className="w-full sm:w-auto sm:flex-1 text-sm sm:text-base touch-manipulation justify-center">
                       <a href={sermon.audioUrl} target="_blank" rel="noopener noreferrer">
                         <Headphones className="mr-2 h-3.5 w-3.5 sm:h-4 sm:w-4" />
                         Listen
                       </a>
                     </Button>
                   )}
-                  <Button asChild size="lg" variant="outline" className="flex-1 text-sm sm:text-base touch-manipulation w-[120px]">
+                  <Button asChild size="lg" variant="outline" className="w-full sm:w-auto sm:flex-1 text-sm sm:text-base touch-manipulation justify-center">
                     <Link href={`/sermons/${sermon.slug}`}>Read More</Link>
                   </Button>
                 </div>

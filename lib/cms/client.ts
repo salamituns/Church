@@ -267,7 +267,7 @@ class CMSClient {
         speaker: "Pastor Moses Olise",
         series: "Living by Faith",
         image: { url: "https://images.unsplash.com/photo-1501594907352-04cda38ebc29?w=1200&h=800&fit=crop&q=80", alt: "This is not the end" },
-        videoUrl: "https://youtube.com/watch?v=example",
+        videoUrl: "https://www.youtube.com/live/CGvZhdLLN0k?si=eByAbzmiKdjdRdR1",
         audioUrl: "https://example.com/audio.mp3",
       },
       {
@@ -294,13 +294,13 @@ class CMSClient {
     return [
       {
         id: "1",
-        name: "John Doe",
+        name: "Ola",
         role: "Member",
         content: "This church has been a blessing to my family. The community is welcoming and the teaching is powerful.",
       },
       {
         id: "2",
-        name: "Jane Smith",
+        name: "Jane",
         role: "Member",
         content: "I found my spiritual home here. The pastors are caring and the ministries are life-changing.",
       },

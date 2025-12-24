@@ -1,0 +1,7 @@
+{
+  "/page": "app/page.js",
+  "/sermons/page": "app/sermons/page.js",
+  "/about/page": "app/about/page.js",
+  "/ministries/[slug]/page": "app/ministries/[slug]/page.js",
+  "/visit/page": "app/visit/page.js"
+}

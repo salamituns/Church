@@ -1,8 +1,9 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Link from "next/link"
 import Image from "next/image"
+import { usePathname } from "next/navigation"
 import { motion, AnimatePresence } from "framer-motion"
 import { Menu, X } from "lucide-react"
 import { Button } from "@/components/ui/button"
@@ -15,6 +16,12 @@ interface HeaderProps {
 
 export function Header({ ministries = [] }: HeaderProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const pathname = usePathname()
+
+  // Close mobile menu when route changes
+  useEffect(() => {
+    setMobileMenuOpen(false)
+  }, [pathname])
 
   return (
     <header 
@@ -52,20 +59,30 @@ export function Header({ ministries = [] }: HeaderProps) {
         </div>
       </div>
 
-      <AnimatePresence>
+      <AnimatePresence mode="wait">
         {mobileMenuOpen && (
           <motion.div
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.3 }}
-            className="border-t overflow-hidden md:hidden"
+            transition={{ duration: 0.2, ease: "easeInOut" }}
+            className="border-t md:hidden overflow-hidden"
           >
-            <Navigation className="flex flex-col p-4" ministries={ministries} />
-            <div className="p-4">
-              <Button asChild className="w-full">
-                <Link href="/give">Donate</Link>
-              </Button>
+            <div 
+              className="overflow-y-auto overscroll-contain"
+              style={{ maxHeight: 'calc(100vh - 3.5rem)' }}
+            >
+              <Navigation 
+                className="flex flex-col p-4" 
+                ministries={ministries} 
+                onLinkClick={() => setMobileMenuOpen(false)}
+                mobile
+              />
+              <div className="p-4 pt-0">
+                <Button asChild className="w-full" onClick={() => setMobileMenuOpen(false)}>
+                  <Link href="/give">Donate</Link>
+                </Button>
+              </div>
             </div>
           </motion.div>
         )}
