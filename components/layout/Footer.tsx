@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { Facebook, Instagram, Youtube } from "lucide-react"
+import { Facebook, Instagram, Youtube, Music } from "lucide-react"
 
 export function Footer() {
   return (
@@ -70,12 +70,12 @@ export function Footer() {
 
           <div className="space-y-4">
             <h4 className="text-sm font-semibold">Follow Us</h4>
-            <div className="flex gap-4">
+            <div className="flex gap-3">
               <a
                 href="https://www.facebook.com/share/17mTv7kDSU/?mibextid=wwXIfr"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-muted-foreground hover:text-primary"
+                className="flex items-center justify-center h-10 w-10 rounded-full bg-[#1877F2] text-white hover:bg-[#166FE5] hover:scale-110 transition-all duration-200 shadow-md hover:shadow-lg"
                 aria-label="Facebook"
               >
                 <Facebook className="h-5 w-5" />
@@ -84,7 +84,7 @@ export function Footer() {
                 href="https://www.instagram.com/shilohmegaparish?igsh=MW9yb3JtN3JsbnU2eQ=="
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-muted-foreground hover:text-primary"
+                className="flex items-center justify-center h-10 w-10 rounded-full bg-gradient-to-br from-[#833AB4] via-[#FD1D1D] to-[#FCAF45] text-white hover:opacity-90 hover:scale-110 transition-all duration-200 shadow-md hover:shadow-lg"
                 aria-label="Instagram"
               >
                 <Instagram className="h-5 w-5" />
@@ -93,10 +93,19 @@ export function Footer() {
                 href="https://youtube.com/@rccgshilohmega?si=khEGz7UwOhEIYl-2"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-muted-foreground hover:text-primary"
+                className="flex items-center justify-center h-10 w-10 rounded-full bg-[#FF0000] text-white hover:bg-[#CC0000] hover:scale-110 transition-all duration-200 shadow-md hover:shadow-lg"
                 aria-label="YouTube"
               >
                 <Youtube className="h-5 w-5" />
+              </a>
+              <a
+                href="https://open.spotify.com/show/37G6a2sMTd37GtARDJXQZt?si=yWhua7o3RQmCoGJ5zTzsTQ"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-center h-10 w-10 rounded-full bg-[#1DB954] text-white hover:bg-[#1ed760] hover:scale-110 transition-all duration-200 shadow-md hover:shadow-lg"
+                aria-label="Spotify Podcast"
+              >
+                <Music className="h-5 w-5" />
               </a>
             </div>
           </div>

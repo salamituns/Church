@@ -3,8 +3,8 @@ import Image from "next/image"
 import { format } from "date-fns"
 import { getSermon, getSermons } from "@/lib/cms/queries"
 import { Card, CardContent } from "@/components/ui/card"
-import { Calendar, User, Play, Headphones } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import { Calendar, User } from "lucide-react"
+import { SermonActions } from "@/components/sermons/SermonActions"
 
 interface PageProps {
   params: Promise<{ slug: string }>
@@ -92,26 +92,7 @@ export default async function SermonPage({ params }: PageProps) {
           )}
         </div>
 
-        {(sermon.videoUrl || sermon.audioUrl) && (
-          <div className="mb-8 flex flex-col gap-4 sm:flex-row">
-            {sermon.videoUrl && (
-              <Button asChild size="lg" className="flex-1">
-                <a href={sermon.videoUrl} target="_blank" rel="noopener noreferrer">
-                  <Play className="mr-2 h-4 w-4" />
-                  Watch Video
-                </a>
-              </Button>
-            )}
-            {sermon.audioUrl && (
-              <Button asChild size="lg" variant="outline" className="flex-1">
-                <a href={sermon.audioUrl} target="_blank" rel="noopener noreferrer">
-                  <Headphones className="mr-2 h-4 w-4" />
-                  Listen to Audio
-                </a>
-              </Button>
-            )}
-          </div>
-        )}
+        <SermonActions videoUrl={sermon.videoUrl} />
 
         {sermon.content && (
           <div

@@ -1,3 +1,5 @@
+"use client"
+
 import Link from "next/link"
 import Image from "next/image"
 import { format } from "date-fns"
@@ -69,24 +71,26 @@ export function SermonCard({
         <CardDescription className="line-clamp-2">{description}</CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           {videoUrl && (
-            <Button asChild variant="default" className="flex-1">
+            <Button asChild variant="default" className="flex-1 min-w-[100px]">
               <a href={videoUrl} target="_blank" rel="noopener noreferrer">
                 <Play className="mr-2 h-4 w-4" />
                 Watch
               </a>
             </Button>
           )}
-          {audioUrl && (
-            <Button asChild variant="outline" className="flex-1">
-              <a href={audioUrl} target="_blank" rel="noopener noreferrer">
-                <Headphones className="mr-2 h-4 w-4" />
-                Listen
-              </a>
-            </Button>
-          )}
-          {!videoUrl && !audioUrl && (
+          <Button 
+            variant="outline" 
+            className="flex-1 min-w-[100px]"
+            onClick={() => {
+              window.open("https://open.spotify.com/show/37G6a2sMTd37GtARDJXQZt?si=yWhua7o3RQmCoGJ5zTzsTQ", "_blank", "noopener,noreferrer")
+            }}
+          >
+            <Headphones className="mr-2 h-4 w-4" />
+            Listen
+          </Button>
+          {!videoUrl && (
             <Button asChild variant="outline" className="w-full">
               <Link href={`/sermons/${slug}`}>View Details</Link>
             </Button>

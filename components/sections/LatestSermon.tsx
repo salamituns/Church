@@ -1,7 +1,6 @@
 "use client"
 
 import Image from "next/image"
-import Link from "next/link"
 import { format } from "date-fns"
 import { motion } from "framer-motion"
 import { Play, Headphones, Calendar, User } from "lucide-react"
@@ -84,16 +83,16 @@ export function LatestSermon({ sermon }: LatestSermonProps) {
                       </a>
                     </Button>
                   )}
-                  {sermon.audioUrl && (
-                    <Button asChild size="lg" variant="outline" className="w-full sm:w-auto sm:flex-1 text-sm sm:text-base touch-manipulation justify-center">
-                      <a href={sermon.audioUrl} target="_blank" rel="noopener noreferrer">
-                        <Headphones className="mr-2 h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                        Listen
-                      </a>
-                    </Button>
-                  )}
-                  <Button asChild size="lg" variant="outline" className="w-full sm:w-auto sm:flex-1 text-sm sm:text-base touch-manipulation justify-center">
-                    <Link href={`/sermons/${sermon.slug}`}>Read More</Link>
+                  <Button 
+                    size="lg" 
+                    variant="outline" 
+                    className="w-full sm:w-auto sm:flex-1 text-sm sm:text-base touch-manipulation justify-center"
+                    onClick={() => {
+                      window.open("https://open.spotify.com/show/37G6a2sMTd37GtARDJXQZt?si=yWhua7o3RQmCoGJ5zTzsTQ", "_blank", "noopener,noreferrer")
+                    }}
+                  >
+                    <Headphones className="mr-2 h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                    Listen
                   </Button>
                 </div>
               </CardContent>
