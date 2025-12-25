@@ -510,7 +510,7 @@ class CMSClient {
         title: "New Year Service",
         description: "Start the new year in prayer and worship. Dedicate 2025 to God's purpose.",
         date: new Date("2026-01-01"),
-        time: "10:00 AM",
+        time: "10:00 PM",
         location: "Main Sanctuary",
         image: { url: "/images/NewYear_service.avif", alt: "New Year Service" },
         featured: true,
