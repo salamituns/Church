@@ -74,17 +74,17 @@ export default async function EventPage({ params }: PageProps) {
           </div>
         )}
 
-        <h1 className="mb-4 text-4xl font-bold">{event.title}</h1>
-        <p className="mb-8 text-xl text-muted-foreground">{event.description}</p>
+        <h1 className="mb-3 text-3xl font-bold md:text-4xl">{event.title}</h1>
+        <p className="mb-6 text-base text-muted-foreground md:text-lg">{event.description}</p>
 
-        <div className="mb-8 grid gap-4 md:grid-cols-2">
+        <div className="mb-8 grid gap-3 md:grid-cols-2">
           <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center gap-3">
-                <Calendar className="h-5 w-5 text-primary" />
+            <CardContent className="p-4">
+              <div className="flex items-center gap-2.5">
+                <Calendar className="h-4 w-4 text-primary flex-shrink-0" />
                 <div>
-                  <p className="text-sm font-semibold text-muted-foreground">Date</p>
-                  <p className="text-lg">{format(event.date, "EEEE, MMMM d, yyyy")}</p>
+                  <p className="text-xs font-semibold text-muted-foreground mb-1">Date</p>
+                  <p className="text-sm md:text-base">{format(event.date, "EEEE, MMMM d, yyyy")}</p>
                 </div>
               </div>
             </CardContent>
@@ -92,12 +92,12 @@ export default async function EventPage({ params }: PageProps) {
 
           {event.time && (
             <Card>
-              <CardContent className="p-6">
-                <div className="flex items-center gap-3">
-                  <Clock className="h-5 w-5 text-primary" />
+              <CardContent className="p-4">
+                <div className="flex items-center gap-2.5">
+                  <Clock className="h-4 w-4 text-primary flex-shrink-0" />
                   <div>
-                    <p className="text-sm font-semibold text-muted-foreground">Time</p>
-                    <p className="text-lg">{event.time}</p>
+                    <p className="text-xs font-semibold text-muted-foreground mb-1">Time</p>
+                    <p className="text-sm md:text-base">{event.time}</p>
                   </div>
                 </div>
               </CardContent>
@@ -106,12 +106,12 @@ export default async function EventPage({ params }: PageProps) {
 
           {event.location && (
             <Card>
-              <CardContent className="p-6">
-                <div className="flex items-center gap-3">
-                  <MapPin className="h-5 w-5 text-primary" />
+              <CardContent className="p-4">
+                <div className="flex items-center gap-2.5">
+                  <MapPin className="h-4 w-4 text-primary flex-shrink-0" />
                   <div>
-                    <p className="text-sm font-semibold text-muted-foreground">Location</p>
-                    <p className="text-lg">{event.location}</p>
+                    <p className="text-xs font-semibold text-muted-foreground mb-1">Location</p>
+                    <p className="text-sm md:text-base">{event.location}</p>
                   </div>
                 </div>
               </CardContent>
