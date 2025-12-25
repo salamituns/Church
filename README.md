@@ -23,7 +23,7 @@ A modern, welcoming church website built with Next.js 14+, TypeScript, and Tailw
 - **Forms**: React Hook Form + Zod validation
 - **CMS**: Headless CMS ready (Contentful/Sanity/Strapi)
 
-## Getting Started
+## Getting Started..
 
 ### Prerequisites
 
