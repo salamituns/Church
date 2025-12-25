@@ -9,7 +9,7 @@ export function Footer() {
     >
       <div className="container py-6 sm:py-8 md:py-12 px-4 sm:px-6">
         <div className="grid grid-cols-1 gap-4 sm:gap-6 md:grid-cols-2 lg:grid-cols-4 md:gap-8">
-          <div className="space-y-2 sm:space-y-3 md:space-y-4">
+          <div className="space-y-2 sm:space-y-3 md:space-y-4 text-center sm:text-left">
             <h3 className="text-base sm:text-lg font-semibold text-white">RCCG Shiloh Mega Parish</h3>
             <p className="text-xs sm:text-sm text-gray-400">
               "A place to belong, grow, and serve."
@@ -22,7 +22,7 @@ export function Footer() {
           </div>
 
           <div className="grid grid-cols-2 gap-4 sm:gap-6 md:contents">
-            <div className="space-y-2 sm:space-y-3 md:space-y-4">
+            <div className="space-y-2 sm:space-y-3 md:space-y-4 text-center sm:text-left">
               <h4 className="text-xs sm:text-sm font-semibold text-white">Quick Links</h4>
               <ul className="space-y-1 sm:space-y-2 text-xs sm:text-sm">
                 <li>
@@ -48,7 +48,7 @@ export function Footer() {
               </ul>
             </div>
 
-            <div className="space-y-2 sm:space-y-3 md:space-y-4">
+            <div className="space-y-2 sm:space-y-3 md:space-y-4 text-center sm:text-left">
               <h4 className="text-xs sm:text-sm font-semibold text-white">Connect</h4>
               <ul className="space-y-1 sm:space-y-2 text-xs sm:text-sm">
                 <li>

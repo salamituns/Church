@@ -3,6 +3,7 @@ import { Inter } from "next/font/google"
 import "./globals.css"
 import { Header } from "@/components/layout/Header"
 import { Footer } from "@/components/layout/Footer"
+import { ScrollToTop } from "@/components/ui/ScrollToTop"
 import { getMinistries } from "@/lib/cms/queries"
 
 const inter = Inter({ subsets: ["latin"] })
@@ -42,6 +43,7 @@ export default async function RootLayout({
         <Header ministries={ministries} />
         <main id="main-content" className="min-h-screen">{children}</main>
         <Footer />
+        <ScrollToTop />
       </body>
     </html>
   )
