@@ -23,7 +23,10 @@ export default async function HomePage() {
     getLatestSermon(),
   ])
 
-  const featuredEvents = events.filter((e) => e.image).slice(0, 5)
+  // Filter events with images, exclude Christmas Carol Night from carousel
+  const featuredEvents = events
+    .filter((e) => e.image && e.slug !== "christmas-carol-night")
+    .slice(0, 6)
 
   return (
     <div className="flex flex-col">

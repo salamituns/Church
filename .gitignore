@@ -43,3 +43,13 @@ next-env.d.ts
 # OS
 Thumbs.db
 
+# Backup and test images
+**/*.backup.*
+**/*_backup.*
+**/check_*.png
+**/final_check.png
+**/person_check.png
+**/new_*.jpg
+**/new_*.png
+**/*-removebg*.png
+
