@@ -54,7 +54,7 @@ export function HeroSection() {
         <ServiceCountdown />
       </motion.div>
       
-      <div className="container relative z-10 px-4 py-12 sm:py-16 md:py-20">
+      <div className="container relative z-10 px-4 pt-32 sm:pt-40 md:pt-48 lg:pt-56 pb-12 sm:pb-16 md:pb-20">
         <div className="mx-auto max-w-3xl text-center">
           <motion.h1
             initial={{ opacity: 0, y: 30 }}
