@@ -1,4 +1,4 @@
-import { EventCalendar } from "@/components/sections/EventCalendar"
+import { EventCategories } from "@/components/sections/EventCategories"
 import { getEvents } from "@/lib/cms/queries"
 
 export const metadata = {
@@ -12,13 +12,13 @@ export default async function EventsPage() {
   return (
     <div className="container py-12">
       <div className="mb-12 text-center">
-        <h1 className="mb-4 text-4xl font-bold">Upcoming Events</h1>
+        <h1 className="mb-4 text-4xl font-bold">Activities</h1>
         <p className="text-lg text-muted-foreground">
           Join us for these special gatherings and activities
         </p>
       </div>
 
-      <EventCalendar events={events} showAll />
+      <EventCategories events={events} />
     </div>
   )
 }
