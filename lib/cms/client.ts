@@ -525,7 +525,7 @@ class CMSClient {
         slug: "christmas-service",
         title: "Christmas Service",
         description: "Join us for a special Christmas celebration with music, worship, and the message of hope.",
-        date: new Date(2025, 11, 25), // December 25, 2025 (month is 0-indexed)
+        date: new Date(Date.UTC(2025, 11, 25, 12, 0, 0)), // December 25, 2025 at noon UTC (avoids timezone boundary issues)
         time: "10:00 AM",
         location: "Main Sanctuary",
         image: { url: "/images/christmas-service-1.webp", alt: "Christmas Service" },
