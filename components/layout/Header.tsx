@@ -43,8 +43,8 @@ export function Header({ ministries = [] }: HeaderProps) {
 
         <Navigation className="hidden md:flex" ministries={ministries} />
 
-        <div className="flex items-center gap-4">
-          <Button asChild className="hidden md:inline-flex">
+        <div className="flex items-center gap-2 sm:gap-4">
+          <Button asChild size="sm" className="text-xs sm:text-sm">
             <Link href="/give">Donate</Link>
           </Button>
           <Button
@@ -78,11 +78,6 @@ export function Header({ ministries = [] }: HeaderProps) {
                 onLinkClick={() => setMobileMenuOpen(false)}
                 mobile
               />
-              <div className="p-4 pt-0">
-                <Button asChild className="w-full" onClick={() => setMobileMenuOpen(false)}>
-                  <Link href="/give">Donate</Link>
-                </Button>
-              </div>
             </div>
           </motion.div>
         )}

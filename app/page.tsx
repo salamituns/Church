@@ -11,7 +11,7 @@ import { FadeInItem } from "@/components/animations/FadeInItem"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import Image from "next/image"
-import { Calendar, ArrowRight } from "lucide-react"
+import { Calendar, ArrowRight, Heart } from "lucide-react"
 import { getPastors, getMinistries, getEvents, getTestimonials, getLatestSermon } from "@/lib/cms/queries"
 
 export default async function HomePage() {
@@ -76,6 +76,27 @@ export default async function HomePage() {
             </div>
           </FadeInOnScroll>
           <MinistryGrid ministries={ministries} />
+        </div>
+      </section>
+
+      {/* Donate Call-to-Action Section */}
+      <section className="py-12 sm:py-14 md:py-16 bg-primary/5">
+        <div className="container px-4 sm:px-6">
+          <FadeInOnScroll>
+            <div className="max-w-2xl mx-auto text-center">
+              <h2 className="mb-3 sm:mb-4 text-2xl sm:text-3xl font-bold">Support Our Mission</h2>
+              <p className="mb-6 sm:mb-8 text-sm sm:text-base text-muted-foreground">
+                Your generous giving helps us continue building people and fulfilling destinies in our community and beyond.
+              </p>
+              <Button asChild size="lg" className="transition-all hover:scale-105 text-sm sm:text-base">
+                <Link href="/give">
+                  <Heart className="mr-2 h-4 w-4" />
+                  Donate Now
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Link>
+              </Button>
+            </div>
+          </FadeInOnScroll>
         </div>
       </section>
 

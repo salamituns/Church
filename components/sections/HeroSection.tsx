@@ -70,7 +70,7 @@ export function HeroSection() {
             transition={{ duration: 0.8, delay: 0.4 }}
             className="mb-6 text-base text-white/90 sm:text-lg sm:mb-8 md:text-xl md:mb-10 lg:text-2xl"
           >
-            A Place to Belong, Grow, and Serve
+            Building people, Fulfilling destinies
           </motion.p>
 
           <motion.div
