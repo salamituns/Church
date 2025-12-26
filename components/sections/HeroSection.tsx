@@ -22,7 +22,7 @@ export function HeroSection() {
       >
         <div className="absolute inset-0">
           <Image
-            src="/images/churchHomepage.avif"
+            src="/images/shiloh.png"
             alt="RCCG Shiloh Mega Parish - A place of salvation and hope"
             fill
             className="object-cover object-[35%_center] md:object-center"
