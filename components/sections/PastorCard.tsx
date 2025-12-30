@@ -18,7 +18,7 @@ export function PastorCard({ name, title, image, bio }: PastorCardProps) {
   const isAssistantPastor = name.includes("Caroline Olise") || image.includes("AsstPastor")
   const imageContainerClassName = isAssistantPastor
     ? "relative h-80 w-full overflow-hidden sm:h-96"
-    : "relative h-64 w-full overflow-hidden"
+    : "relative h-80 w-full overflow-hidden sm:h-96"
   const imageClassName = isPastorOlise 
     ? "object-cover object-[center_25%]" 
     : isAssistantPastor

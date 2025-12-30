@@ -24,7 +24,7 @@ const mockPastors: Pastor[] = [
   {
     id: "1",
     name: "Pastor Moses Olise",
-    title: "Senior Pastor",
+    title: "Provincial Pastor",
     bio: "Leading with vision and passion for God's work.",
     image: {
       url: "/images/pastorOlise.webp",
@@ -34,7 +34,7 @@ const mockPastors: Pastor[] = [
   {
     id: "2",
     name: "Pastor Caroline Olise",
-    title: "Assistant Pastor",
+    title: "Deputy Pastor",
     bio: "Dedicated to serving the community with love and grace.",
     image: {
       url: "/images/MrsOlise.png",
