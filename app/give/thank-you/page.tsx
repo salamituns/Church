@@ -1,14 +1,24 @@
+"use client"
+
+import { useEffect, useState, Suspense } from "react"
+import { useSearchParams } from "next/navigation"
 import Link from "next/link"
 import { CheckCircle } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 
-export const metadata = {
-  title: "Thank You | RCCG Shiloh Mega Parish",
-  description: "Thank you for your generous donation.",
-}
+function ThankYouContent() {
+  const searchParams = useSearchParams()
+  const sessionId = searchParams.get("session_id")
+  const [isRecurring, setIsRecurring] = useState(false)
 
-export default function ThankYouPage() {
+  useEffect(() => {
+    // If there's a session_id, it's from a recurring donation (Stripe Checkout)
+    if (sessionId) {
+      setIsRecurring(true)
+    }
+  }, [sessionId])
+
   return (
     <div className="container py-12">
       <Card className="mx-auto max-w-2xl text-center">
@@ -26,6 +36,11 @@ export default function ThankYouPage() {
             We are grateful for your generosity and support. Your contribution helps us 
             continue serving our community and spreading the gospel.
           </p>
+          {isRecurring && (
+            <p className="text-sm font-medium text-primary">
+              Your recurring donation has been set up successfully. Thank you for your ongoing support!
+            </p>
+          )}
           <p className="text-sm text-muted-foreground">
             You will receive a confirmation email shortly with your donation receipt.
           </p>
@@ -43,3 +58,18 @@ export default function ThankYouPage() {
   )
 }
 
+export default function ThankYouPage() {
+  return (
+    <Suspense fallback={
+      <div className="container py-12">
+        <Card className="mx-auto max-w-2xl text-center">
+          <CardHeader>
+            <CardTitle className="text-3xl">Loading...</CardTitle>
+          </CardHeader>
+        </Card>
+      </div>
+    }>
+      <ThankYouContent />
+    </Suspense>
+  )
+}
