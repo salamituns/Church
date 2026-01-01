@@ -5,8 +5,13 @@ import { motion, AnimatePresence } from "framer-motion"
 import { Clock } from "lucide-react"
 import { getNextService, formatTimeRemaining } from "@/lib/utils/serviceTimes"
 import { Card, CardContent } from "@/components/ui/card"
+import type { Event } from "@/lib/cms/types"
 
-export function ServiceCountdown() {
+interface ServiceCountdownProps {
+  events?: Event[]
+}
+
+export function ServiceCountdown({ events }: ServiceCountdownProps) {
   const [timeRemaining, setTimeRemaining] = useState<{
     days: number
     hours: number
@@ -19,7 +24,7 @@ export function ServiceCountdown() {
   } | null>(null)
 
   useEffect(() => {
-    const service = getNextService()
+    const service = getNextService(events)
     setNextService(service)
 
     if (service) {
@@ -33,7 +38,7 @@ export function ServiceCountdown() {
 
       return () => clearInterval(interval)
     }
-  }, [])
+  }, [events])
 
   if (!nextService || !timeRemaining) {
     return null

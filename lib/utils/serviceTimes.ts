@@ -1,3 +1,5 @@
+import type { Event } from "@/lib/cms/types"
+
 export interface ServiceTime {
   name: string
   day: "sunday" | "wednesday" | "last-sunday" | "friday"
@@ -28,13 +30,19 @@ export const serviceTimes: ServiceTime[] = [
   },
 ]
 
-export function getNextService(): { service: ServiceTime; date: Date } | null {
+/**
+ * Gets the next upcoming service or special event, whichever is sooner.
+ * @param events - Optional array of special events to check against
+ * @returns The next service/event with its date, or null if none found
+ */
+export function getNextService(events?: Event[]): { 
+  service: ServiceTime | { name: string; time: string; description?: string }; 
+  date: Date 
+} | null {
   const now = new Date()
-  const currentDay = now.getDay()
-  const currentHour = now.getHours()
-  const currentMinute = now.getMinutes()
+  const nextServices: Array<{ service: ServiceTime | { name: string; time: string; description?: string }; date: Date }> = []
 
-  // Find next service
+  // Find next recurring services
   for (let i = 0; i < 14; i++) {
     const checkDate = new Date(now)
     checkDate.setDate(checkDate.getDate() + i)
@@ -73,16 +81,67 @@ export function getNextService(): { service: ServiceTime; date: Date } | null {
         // If it's today, check if the time has passed
         if (i === 0) {
           if (serviceDate > now) {
-            return { service, date: serviceDate }
+            nextServices.push({ service, date: serviceDate })
           }
         } else {
-          return { service, date: serviceDate }
+          nextServices.push({ service, date: serviceDate })
         }
       }
     }
   }
 
-  return null
+  // Check for upcoming special events
+  if (events && events.length > 0) {
+    const parseEventTime = (event: Event): Date => {
+      const eventDate = new Date(event.date)
+      if (event.time) {
+        const timeStr = event.time.toUpperCase()
+        const [hoursStr, minutesStr] = event.time.split(":")
+        let hours = parseInt(hoursStr, 10)
+        const minutes = parseInt(minutesStr?.split(/\s/)[0] || "0", 10)
+        const isPM = timeStr.includes("PM")
+        
+        // Convert to 24-hour format
+        if (isPM && hours !== 12) {
+          hours += 12
+        } else if (!isPM && hours === 12) {
+          hours = 0
+        }
+        
+        eventDate.setHours(hours, minutes, 0, 0)
+      } else {
+        eventDate.setHours(10, 0, 0, 0) // Default to 10:00 AM
+      }
+      return eventDate
+    }
+
+    const upcomingEvents = events
+      .filter((event) => {
+        const eventDate = parseEventTime(event)
+        return eventDate > now
+      })
+      .map((event) => {
+        const eventDate = parseEventTime(event)
+        return {
+          service: {
+            name: event.title,
+            time: event.time || "10:00 AM",
+            description: event.description,
+          },
+          date: eventDate,
+        }
+      })
+
+    nextServices.push(...upcomingEvents)
+  }
+
+  // Return the service/event that's coming up soonest
+  if (nextServices.length === 0) {
+    return null
+  }
+
+  nextServices.sort((a, b) => a.date.getTime() - b.date.getTime())
+  return nextServices[0]
 }
 
 function getLastSundayOfMonth(date: Date): Date {

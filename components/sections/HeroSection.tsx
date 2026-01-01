@@ -6,8 +6,13 @@ import { Button } from "@/components/ui/button"
 import { ServiceCountdown } from "./ServiceCountdown"
 import Link from "next/link"
 import { ArrowRight, ChevronDown } from "lucide-react"
+import type { Event } from "@/lib/cms/types"
 
-export function HeroSection() {
+interface HeroSectionProps {
+  events?: Event[]
+}
+
+export function HeroSection({ events }: HeroSectionProps) {
   return (
     <section 
       className="relative min-h-screen flex items-center justify-center overflow-hidden"
@@ -41,7 +46,7 @@ export function HeroSection() {
         transition={{ duration: 0.5, delay: 0.3 }}
         className="absolute top-8 right-4 z-20 hidden md:block"
       >
-        <ServiceCountdown />
+        <ServiceCountdown events={events} />
       </motion.div>
       
       {/* Countdown for mobile - smaller, top center */}
@@ -51,7 +56,7 @@ export function HeroSection() {
         transition={{ duration: 0.5, delay: 0.3 }}
         className="absolute top-4 left-1/2 -translate-x-1/2 z-20 md:hidden"
       >
-        <ServiceCountdown />
+        <ServiceCountdown events={events} />
       </motion.div>
       
       <div className="container relative z-10 px-4 pt-32 sm:pt-40 md:pt-48 lg:pt-56 pb-12 sm:pb-16 md:pb-20">
