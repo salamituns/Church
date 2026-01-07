@@ -30,6 +30,9 @@ export async function generateMetadata({ params }: PageProps) {
   return {
     title: `${sermon.title} | RCCG Shiloh Mega Parish`,
     description: sermon.description,
+    openGraph: {
+      url: `https://rccgshilohmega.org/sermons/${slug}`,
+    },
   }
 }
 

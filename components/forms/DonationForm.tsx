@@ -145,7 +145,10 @@ export function DonationForm() {
         const result = await response.json()
 
         if (result.error) {
-          alert(result.error)
+          const errorMessage = result.details 
+            ? `${result.error}\n\n${result.details}`
+            : result.error
+          alert(errorMessage)
           setIsProcessing(false)
           return
         }
@@ -163,7 +166,10 @@ export function DonationForm() {
         const result = await response.json()
 
         if (result.error) {
-          alert(result.error)
+          const errorMessage = result.details 
+            ? `${result.error}\n\n${result.details}`
+            : result.error
+          alert(errorMessage)
           setIsProcessing(false)
           return
         }

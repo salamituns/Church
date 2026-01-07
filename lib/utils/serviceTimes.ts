@@ -1,5 +1,34 @@
 import type { Event } from "@/lib/cms/types"
 
+/**
+ * Parses an event's date and time into a Date object with the correct time set.
+ * @param event - The event to parse
+ * @param defaultHour - Default hour if no time is specified (default: 10 for 10:00 AM)
+ * @returns Date object with the event's date and time set
+ */
+export function parseEventDateTime(event: Event, defaultHour: number = 10): Date {
+  const eventDate = new Date(event.date)
+  if (event.time) {
+    const timeStr = event.time.toUpperCase()
+    const [hoursStr, minutesStr] = event.time.split(":")
+    let hours = parseInt(hoursStr, 10)
+    const minutes = parseInt(minutesStr?.split(/\s/)[0] || "0", 10)
+    const isPM = timeStr.includes("PM")
+    
+    // Convert to 24-hour format
+    if (isPM && hours !== 12) {
+      hours += 12
+    } else if (!isPM && hours === 12) {
+      hours = 0
+    }
+    
+    eventDate.setHours(hours, minutes, 0, 0)
+  } else {
+    eventDate.setHours(defaultHour, 0, 0, 0)
+  }
+  return eventDate
+}
+
 export interface ServiceTime {
   name: string
   day: "sunday" | "wednesday" | "last-sunday" | "friday"
@@ -92,36 +121,13 @@ export function getNextService(events?: Event[]): {
 
   // Check for upcoming special events
   if (events && events.length > 0) {
-    const parseEventTime = (event: Event): Date => {
-      const eventDate = new Date(event.date)
-      if (event.time) {
-        const timeStr = event.time.toUpperCase()
-        const [hoursStr, minutesStr] = event.time.split(":")
-        let hours = parseInt(hoursStr, 10)
-        const minutes = parseInt(minutesStr?.split(/\s/)[0] || "0", 10)
-        const isPM = timeStr.includes("PM")
-        
-        // Convert to 24-hour format
-        if (isPM && hours !== 12) {
-          hours += 12
-        } else if (!isPM && hours === 12) {
-          hours = 0
-        }
-        
-        eventDate.setHours(hours, minutes, 0, 0)
-      } else {
-        eventDate.setHours(10, 0, 0, 0) // Default to 10:00 AM
-      }
-      return eventDate
-    }
-
     const upcomingEvents = events
       .filter((event) => {
-        const eventDate = parseEventTime(event)
+        const eventDate = parseEventDateTime(event)
         return eventDate > now
       })
       .map((event) => {
-        const eventDate = parseEventTime(event)
+        const eventDate = parseEventDateTime(event)
         return {
           service: {
             name: event.title,

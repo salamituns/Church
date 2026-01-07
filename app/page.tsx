@@ -13,6 +13,7 @@ import Link from "next/link"
 import Image from "next/image"
 import { Calendar, ArrowRight, Heart } from "lucide-react"
 import { getPastors, getMinistries, getEvents, getTestimonials, getLatestSermon } from "@/lib/cms/queries"
+import { parseEventDateTime } from "@/lib/utils/serviceTimes"
 
 export default async function HomePage() {
   const [pastors, ministries, events, testimonials, latestSermon] = await Promise.all([
@@ -23,9 +24,16 @@ export default async function HomePage() {
     getLatestSermon(),
   ])
 
-  // Filter events with images, exclude Christmas Carol Night from carousel
+  // Filter to only upcoming events with images, exclude Christmas Carol Night from carousel
+  const now = new Date()
   const featuredEvents = events
-    .filter((e) => e.image && e.slug !== "christmas-carol-night")
+    .filter((e) => {
+      const eventDate = parseEventDateTime(e, 23) // Use 23:59:59 for end of day if no time specified
+      if (!e.time) {
+        eventDate.setHours(23, 59, 59, 999) // Set to end of day if no time specified
+      }
+      return eventDate > now && e.image && e.slug !== "christmas-carol-night"
+    })
     .slice(0, 6)
 
   return (
