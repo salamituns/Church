@@ -9,7 +9,8 @@
     "lint": "next lint",
     "composite-pastor": "tsx scripts/composite-pastor-image.ts",
     "replace-pastor": "tsx scripts/replace-pastor-image.ts",
-    "create-clean-background": "tsx scripts/create-clean-background.ts"
+    "create-clean-background": "tsx scripts/create-clean-background.ts",
+    "generate-favicon": "tsx scripts/generate-favicon.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.3.4",
