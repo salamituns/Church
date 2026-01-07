@@ -25,18 +25,21 @@ export function HeroSection({ events }: HeroSectionProps) {
         animate={{ scale: 1 }}
         transition={{ duration: 1.5, ease: "easeOut" }}
       >
-        <div className="absolute inset-0">
+        <div className="absolute inset-0 scale-[0.85] md:scale-100">
           <Image
             src="/images/shiloh.png"
             alt="RCCG Shiloh Mega Parish - A place of salvation and hope"
             fill
-            className="object-cover object-[43%_center] md:object-center"
+            className="object-cover md:object-center"
+            style={{ 
+              objectPosition: 'center 55%'
+            }}
             priority
             quality={90}
           />
         </div>
-        {/* Lighter overlay to let image show through more */}
-        <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/40 to-black/60" />
+        {/* Lighter overlay to let image show through more - reduced opacity on mobile */}
+        <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/25 to-black/40 md:from-black/50 md:via-black/40 md:to-black/60" />
       </motion.div>
       
       {/* Subtle countdown in top right corner (desktop) */}
