@@ -142,6 +142,30 @@ The site can be deployed to any platform that supports Next.js:
 
 Copyright © 2025 RCCG Shiloh Mega Parish
 
+## Documentation
+
+📚 **All documentation is located in the [`docs/`](./docs/) folder.**
+
+**Start here**: [`docs/README.md`](./docs/README.md) - Documentation index and navigation guide
+
+### Quick Links
+
+- 📖 **[Complete Documentation](./docs/documentation.md)** - Comprehensive guide covering everything
+- 🔍 **[Quick Reference](./docs/quick-reference.md)** - Fast lookups and common tasks
+- 👁️ **[Visual Guide](./docs/visual-guide.md)** - Simple explanations for non-engineers
+- 🏗️ **[Architecture](./docs/architecture.md)** - System architecture and design
+
+### Setup & Configuration
+
+- 📝 **[CMS Explanation](./docs/guides/cms-explanation.md)** - Understanding and setting up a CMS
+- 💳 **[Stripe Setup](./docs/guides/stripe-setup.md)** - Payment processing setup
+- ✅ **[Testing](./docs/development/testing.md)** - Testing guidelines
+
+### Project Management
+
+- 📋 **[Changelog](./docs/project/changelog.md)** - Version history
+- 🚀 **[Enhancement Plan](./docs/project/enhancement-plan.md)** - Future improvements
+
 ## Support
 
 For questions or support, please contact the church office.
