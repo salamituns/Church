@@ -1,0 +1,22 @@
+[
+  {
+    "id": "1",
+    "name": "Pastor Moses Olise",
+    "title": "Provincial Pastor",
+    "bio": "Leading with vision and passion for God's work.",
+    "image": {
+      "url": "/images/pastorOlise.webp",
+      "alt": "Pastor Moses Olise"
+    }
+  },
+  {
+    "id": "2",
+    "name": "Pastor Caroline Olise",
+    "title": "Deputy Pastor",
+    "bio": "Dedicated to serving the community with love and grace.",
+    "image": {
+      "url": "/images/MrsOlise.png",
+      "alt": "Pastor Caroline Olise"
+    }
+  }
+]

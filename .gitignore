@@ -53,3 +53,5 @@ Thumbs.db
 **/new_*.png
 **/*-removebg*.png
 
+
+/lib/generated/prisma

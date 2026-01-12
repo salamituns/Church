@@ -1,0 +1,195 @@
+// This is your Prisma schema file for the Church donation system
+// To use this:
+// 1. Install Prisma: npm install prisma @prisma/client
+// 2. Run: npx prisma init
+// 3. Copy this schema to prisma/schema.prisma
+// 4. Configure your DATABASE_URL in .env
+// 5. Run: npx prisma migrate dev --name init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql" // or "mysql", "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// One-time donations
+model Donation {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Stripe fields
+  stripePaymentIntentId String  @unique
+  stripeCustomerId      String?
+  stripeChargeId        String?
+
+  // Donation details
+  amount   Decimal @db.Decimal(10, 2)
+  currency String  @default("usd")
+  status   String  // succeeded, failed, refunded, etc.
+
+  // Donor information
+  donorName  String
+  donorEmail String
+  message    String?
+  purpose    String  @default("Offering")
+
+  // Refund tracking
+  refunded       Boolean  @default(false)
+  refundAmount   Decimal? @db.Decimal(10, 2)
+  refundedAt     DateTime?
+  refundReason   String?
+
+  // Failed payment tracking
+  failureMessage String?
+
+  // Relations
+  donor Donor? @relation(fields: [donorEmail], references: [email])
+
+  @@index([donorEmail])
+  @@index([createdAt])
+  @@index([status])
+  @@index([purpose])
+}
+
+// Recurring subscriptions
+model Subscription {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Stripe fields
+  stripeSubscriptionId String @unique
+  stripeCustomerId     String
+  stripePriceId        String
+
+  // Subscription details
+  amount   Decimal @db.Decimal(10, 2)
+  currency String  @default("usd")
+  interval String  // week, month, year
+  status   String  // active, canceled, incomplete, past_due, etc.
+
+  // Donor information
+  donorName  String
+  donorEmail String
+  message    String?
+  purpose    String  @default("Offering")
+
+  // Period tracking
+  currentPeriodStart DateTime
+  currentPeriodEnd   DateTime
+
+  // Cancellation tracking
+  canceledAt       DateTime?
+  cancellationNote String?
+
+  // Payment tracking
+  lastPaymentFailed Boolean  @default(false)
+  failureReason     String?
+
+  // Relations
+  donor    Donor?            @relation(fields: [donorEmail], references: [email])
+  payments RecurringPayment[]
+
+  @@index([donorEmail])
+  @@index([createdAt])
+  @@index([status])
+  @@index([purpose])
+}
+
+// Track individual payments for subscriptions
+model RecurringPayment {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+
+  // Stripe fields
+  stripeInvoiceId      String @unique
+  stripeSubscriptionId String
+  stripeChargeId       String?
+
+  // Payment details
+  amount   Decimal  @db.Decimal(10, 2)
+  currency String   @default("usd")
+  status   String   // paid, failed, etc.
+  paidAt   DateTime?
+
+  // Failure tracking
+  failureMessage String?
+
+  // Relations
+  subscription Subscription @relation(fields: [stripeSubscriptionId], references: [stripeSubscriptionId])
+
+  @@index([stripeSubscriptionId])
+  @@index([paidAt])
+  @@index([status])
+}
+
+// Donor profiles
+model Donor {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Donor information
+  email     String  @unique
+  name      String
+  phone     String?
+  address   String?
+
+  // Stripe customer ID
+  stripeCustomerId String? @unique
+
+  // Preferences
+  receiveEmails     Boolean @default(true)
+  preferredPurpose  String?
+  notes             String?
+
+  // Relations
+  donations     Donation[]
+  subscriptions Subscription[]
+
+  @@index([email])
+  @@index([stripeCustomerId])
+}
+
+// Webhook event log (for idempotency and debugging)
+model WebhookEvent {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+
+  // Stripe event details
+  stripeEventId String @unique
+  eventType     String
+  processed     Boolean  @default(false)
+  processingError String?
+
+  // Event data (stored as JSON)
+  eventData Json
+
+  @@index([stripeEventId])
+  @@index([eventType])
+  @@index([createdAt])
+}
+
+// Admin notifications log
+model AdminNotification {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+
+  // Notification details
+  type      String // donation, subscription, failure, refund, etc.
+  message   String
+  metadata  Json?
+
+  // Status
+  sent      Boolean   @default(false)
+  sentAt    DateTime?
+  readAt    DateTime?
+
+  @@index([type])
+  @@index([sent])
+  @@index([createdAt])
+}

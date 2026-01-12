@@ -63,21 +63,22 @@ Person types: rccgshilohmega.org
 
 ### Step 2: Where Does the Information Come From?
 
-Right now, all the information (pastors, events, ministries) is stored in a **code file** on our server:
+Right now, all the information (pastors, events, ministries) is stored in **JSON files**:
 
 ```
 ┌─────────────────────────────────────┐
-│  File: lib/cms/client.ts            │
+│  Folder: lib/cms/data/               │
 │                                     │
-│  This file contains:                │
-│  • Pastor names and bios           │
-│  • Event details                   │
-│  • Ministry descriptions           │
-│  • Sermon information              │
+│  Files:                             │
+│  • pastors.json                     │
+│  • ministries.json                  │
+│  • events.json                      │
+│  • sermons.json                     │
+│  • testimonials.json                │
 └─────────────────────────────────────┘
 ```
 
-**Think of it like a filing cabinet** - all the church information is stored in one place.
+**Think of it like a filing cabinet** - each type of content has its own file, easy to find and update.
 
 ---
 
@@ -85,25 +86,28 @@ Right now, all the information (pastors, events, ministries) is stored in a **co
 
 ### Example: Adding a New Event
 
-**Current Process** (Simple but requires a developer):
+**Current Process** (Simple - can edit on GitHub):
 
 ```
-1. Developer opens: lib/cms/client.ts
+1. Open: lib/cms/data/events.json
    │
    ▼
-2. Finds the events section
-   │
-   ▼
-3. Adds new event information:
+2. Add new event to the array:
    {
-     title: "Easter Service",
-     date: "April 20, 2025",
-     time: "10:00 AM",
-     location: "Main Sanctuary"
+     "id": "12",
+     "slug": "easter-service",
+     "title": "Easter Service",
+     "date": "2025-04-20T10:00:00.000Z",
+     "time": "10:00 AM",
+     "location": "Main Sanctuary",
+     "description": "Join us for Easter celebration"
    }
    │
    ▼
-4. Saves file and redeploys website
+3. Save file (or commit on GitHub)
+   │
+   ▼
+4. Website automatically updates (if using Vercel)
    │
    ▼
 5. New event appears on website
@@ -404,49 +408,40 @@ app/
 **Example**: Change pastor's bio
 
 ```
-1. Find the file: lib/cms/client.ts
+1. Find the file: lib/cms/data/pastors.json
    │
    ▼
-2. Look for: mockPastors
+2. Find the pastor you want to change
    │
    ▼
-3. Find the pastor you want to change
-   │
-   ▼
-4. Change the "bio" text:
+3. Change the "bio" text:
    
-   bio: "Old text here"
-        ↓
-   bio: "New text here"
+   "bio": "Old text here"
+           ↓
+   "bio": "New text here"
    │
    ▼
-5. Save the file
+4. Save the file (or commit on GitHub)
    │
    ▼
-6. Website updates (after redeployment)
+5. Website updates automatically (if using Vercel)
 ```
 
 ### If You Want to Add an Event
 
 ```
-1. Find the file: lib/cms/client.ts
+1. Find the file: lib/cms/data/events.json
    │
    ▼
-2. Look for: getEvents() method
-   │
-   ▼
-3. Find the mockEvents array
-   │
-   ▼
-4. Add a new event object:
+2. Add a new event object to the array:
    {
-     id: "12",
-     slug: "easter-service",
-     title: "Easter Service",
-     date: new Date("2025-04-20"),
-     time: "10:00 AM",
-     location: "Main Sanctuary",
-     description: "Join us for Easter celebration",
+     "id": "12",
+     "slug": "easter-service",
+     "title": "Easter Service",
+     "date": "2025-04-20T10:00:00.000Z",
+     "time": "10:00 AM",
+     "location": "Main Sanctuary",
+     "description": "Join us for Easter celebration",
      image: { url: "/images/easter.webp", alt: "Easter" }
    }
    │
@@ -463,7 +458,7 @@ app/
 
 ### Q: Where does the data come from?
 
-**A**: Right now, it's stored in code files (mock data). In the future, it can come from a CMS (Content Management System) where staff can update it through a web interface.
+**A**: Right now, it's stored in JSON files in `lib/cms/data/`. You can edit these files directly on GitHub or locally. In the future, it can be upgraded to a CMS (Content Management System) where staff can update it through a web interface.
 
 ### Q: How do I update the service times?
 

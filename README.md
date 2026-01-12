@@ -8,7 +8,7 @@ A modern, welcoming church website built with Next.js 14+, TypeScript, and Tailw
 - **Responsive**: Fully responsive design that works on all devices
 - **Performance Optimized**: Fast loading times with Next.js optimizations
 - **Accessible**: WCAG 2.1 AA compliant with proper ARIA labels
-- **CMS Ready**: Flexible headless CMS integration (Contentful/Sanity/Strapi)
+- **JSON-Based Content**: Easy content updates via JSON files (no CMS required)
 - **Online Giving**: Secure donation processing
 - **Event Management**: Calendar and event registration
 - **Sermon Archive**: Audio/video sermon library
@@ -21,7 +21,7 @@ A modern, welcoming church website built with Next.js 14+, TypeScript, and Tailw
 - **Styling**: Tailwind CSS
 - **Components**: shadcn/ui (Radix UI primitives)
 - **Forms**: React Hook Form + Zod validation
-- **CMS**: Headless CMS ready (Contentful/Sanity/Strapi)
+- **Content Management**: JSON file-based (can upgrade to CMS later)
 
 ## Getting Started..
 
@@ -42,11 +42,11 @@ npm install
 cp .env.example .env.local
 ```
 
-Add your CMS and API keys:
-- `NEXT_PUBLIC_CMS_API_KEY` - Your CMS API key
-- `NEXT_PUBLIC_CMS_SPACE_ID` - Your CMS space ID (if using Contentful)
+Add your API keys:
 - `STRIPE_PUBLIC_KEY` - Stripe public key (for donations)
-- `EMAIL_SERVICE_API_KEY` - Email service API key
+- `STRIPE_SECRET_KEY` - Stripe secret key (for server-side)
+- `STRIPE_WEBHOOK_SECRET` - Stripe webhook secret (for payment confirmations)
+- `EMAIL_SERVICE_API_KEY` - Email service API key (optional, for contact form)
 
 3. Run the development server:
 ```bash
@@ -78,25 +78,30 @@ ChurchSite/
 └── public/                 # Static assets
 ```
 
-## CMS Integration
+## Content Management
 
-The website is designed to work with any headless CMS. Currently, it uses mock data. To integrate with your CMS:
+Content is managed through JSON files in `lib/cms/data/`. This approach is:
+- ✅ **Free** - No monthly CMS costs
+- ✅ **Simple** - Edit JSON files directly
+- ✅ **Version Controlled** - All changes tracked in Git
+- ✅ **Easy to Update** - Edit files on GitHub or locally
 
-1. Update `lib/cms/client.ts` with your CMS SDK
-2. Replace mock data with actual API calls
-3. Configure content types in your CMS:
-   - Pages
-   - Ministries
-   - Events
-   - Sermons
-   - Pastors
-   - Testimonials
+### Updating Content
 
-### Supported CMS Options
+1. **Edit JSON files** in `lib/cms/data/`:
+   - `pastors.json` - Pastor profiles
+   - `ministries.json` - Ministry information
+   - `events.json` - Upcoming events
+   - `sermons.json` - Sermon archive
+   - `testimonials.json` - Member testimonials
 
-- **Contentful**: Use `contentful` package
-- **Sanity**: Use `@sanity/client` and `@portabletext/react`
-- **Strapi**: Use `strapi-sdk` or direct fetch calls
+2. **See `lib/cms/data/README.md`** for detailed instructions and examples
+
+3. **Deploy** - Changes auto-deploy on Git push (if using Vercel)
+
+### Future: CMS Integration
+
+The architecture supports upgrading to a headless CMS (Contentful/Sanity/Strapi) later if needed. Just replace the JSON file imports in `lib/cms/client.ts` with CMS API calls.
 
 ## Payment Integration
 

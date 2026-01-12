@@ -1,73 +1,77 @@
-# Understanding CMS (Content Management System)
+# Understanding Content Management
 
-## What is CMS?
+## Current Setup: JSON Files ✅
 
-**CMS = Content Management System** - A tool that lets non-technical people (like church staff) add, edit, and manage website content through a simple web interface, **without touching code**.
+Your website uses **JSON files** to store content. This is a simple, free approach that works great for most churches.
 
-## Current Setup: Mock Data (Hardcoded)
+### How It Works
 
-Right now, all your content is **hardcoded in code files**. Here's what that looks like:
+Content is stored in JSON files in `lib/cms/data/`:
 
-### Example: Current Setup (Mock Data)
-
-```typescript
-// lib/cms/client.ts - This is where your data lives now
-const mockPastors: Pastor[] = [
+```json
+// lib/cms/data/pastors.json
+[
   {
-    id: "1",
-    name: "Pastor Moses Olise",
-    title: "Provincial Pastor",
-    bio: "Leading with vision and passion for God's work.",
-    image: {
-      url: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d",
-      alt: "Pastor Moses Olise",
-    },
-  },
-  // ... more pastors
+    "id": "1",
+    "name": "Pastor Moses Olise",
+    "title": "Provincial Pastor",
+    "bio": "Leading with vision and passion for God's work.",
+    "image": {
+      "url": "/images/pastorOlise.webp",
+      "alt": "Pastor Moses Olise"
+    }
+  }
 ]
 ```
 
-**To update content, you need to:**
-1. Open the code file (`lib/cms/client.ts`)
-2. Edit the data directly
-3. Redeploy the website
-4. Requires a developer or technical knowledge
+**To update content:**
+1. Edit the JSON file (on GitHub or locally)
+2. Save and commit
+3. Website automatically updates (if using Vercel)
+
+**Benefits:**
+- ✅ **Free** - No monthly costs
+- ✅ **Simple** - Just edit JSON files
+- ✅ **Version Controlled** - All changes tracked in Git
+- ✅ **Easy** - Can edit on GitHub's web interface
+- ✅ **Fast** - No external services needed
 
 ---
 
-## Two Options for Managing Content
+## Content Management Options
 
-### Option 1: Keep Mock Data (Manual Updates) ✅ **SIMPLER**
+### Option 1: JSON Files (Current) ✅ **RECOMMENDED**
 
 **What it means:**
-- Keep the current setup where data is in code files
-- When you need to update content, edit the code file
-- Simple and free - no additional services needed
+- Content stored in JSON files
+- Edit files directly (GitHub or locally)
+- Simple and free
 
 **Pros:**
 - ✅ No extra cost
-- ✅ No learning curve
-- ✅ Full control
+- ✅ Easy to understand
+- ✅ Version controlled
+- ✅ Can edit on GitHub (no code knowledge needed)
 - ✅ Works immediately
 
 **Cons:**
-- ❌ Requires developer/technical person to update
-- ❌ Changes require code deployment
-- ❌ Not ideal if content changes frequently
+- ❌ Requires basic JSON knowledge (or GitHub editing)
+- ❌ Changes require Git commit/deploy
+- ❌ Not ideal for very frequent updates (daily)
 
 **Best for:**
-- Small churches
-- Content that doesn't change often
-- If you have a developer available
+- Most churches
+- Content that updates weekly/monthly
+- Teams comfortable with GitHub
 
 ---
 
-### Option 2: Use a Real CMS (Content Management System) ✅ **MORE FLEXIBLE**
+### Option 2: Use a Headless CMS (Future Option) ✅ **MORE FLEXIBLE**
 
 **What it means:**
 - Use a service like Contentful, Sanity, or Strapi
 - Church staff can log into a web interface to update content
-- No code editing required
+- No code or JSON editing required
 
 **How it works:**
 
@@ -101,9 +105,10 @@ const mockPastors: Pastor[] = [
 **Pros:**
 - ✅ Non-technical staff can update content
 - ✅ Changes appear immediately
-- ✅ Better for frequent updates
+- ✅ Better for very frequent updates (daily)
 - ✅ Multiple people can manage content
 - ✅ Version history (see what changed)
+- ✅ Visual editor (no JSON needed)
 
 **Cons:**
 - ❌ Monthly cost ($0-25/month typically)
@@ -111,9 +116,9 @@ const mockPastors: Pastor[] = [
 - ❌ Staff needs to learn the CMS interface
 
 **Best for:**
-- Churches with active content updates
-- Multiple staff managing content
-- Want independence from developers
+- Churches with daily content updates
+- Multiple non-technical staff managing content
+- Want complete independence from developers
 
 ---
 
@@ -140,42 +145,42 @@ const mockPastors: Pastor[] = [
 
 **For most churches, I recommend:**
 
-1. **Start with Mock Data** (Option 1)
-   - Get the site live first
-   - See how often you need to update content
-   - No rush to add complexity
+1. **Start with JSON Files** (Option 1) ✅ **CURRENT SETUP**
+   - Already implemented and working
+   - Free and simple
+   - Easy to update via GitHub
+   - Perfect for weekly/monthly updates
 
 2. **Upgrade to CMS later** (Option 2) if:
-   - You're updating content weekly/monthly
-   - Multiple people need to manage content
-   - You want independence from developers
+   - You're updating content daily
+   - Multiple non-technical people need to manage content
+   - Staff struggles with JSON/GitHub editing
+   - You want a visual editor
 
 ---
 
 ## What You Need to Do
 
-### If Choosing Option 1 (Keep Mock Data):
-1. ✅ Replace placeholder content with real content
-2. ✅ Update images with real church photos
-3. ✅ Edit `lib/cms/client.ts` with your actual data
-4. ✅ Done! No CMS needed
+### Current Setup (JSON Files):
+1. ✅ **Already done!** Content is in JSON files
+2. ✅ Edit JSON files in `lib/cms/data/` to update content
+3. ✅ See `lib/cms/data/README.md` for instructions
+4. ✅ Can edit on GitHub's web interface (no code needed)
 
-### If Choosing Option 2 (Use CMS):
+### If Upgrading to CMS (Future):
 1. Choose a CMS (Contentful recommended)
 2. Sign up for account
 3. Set up content types (Pastors, Ministries, Events, etc.)
-4. I'll help connect it to your website
+4. Replace JSON imports in `lib/cms/client.ts` with CMS API calls
 5. Train staff on using the CMS
 
 ---
 
 ## Summary
 
-**CMS = A web interface where non-technical people can update website content without editing code.**
+**Current Setup:** JSON files in `lib/cms/data/` - Simple, free, and easy to update via GitHub.
 
-**You have two choices:**
-- **Option 1:** Keep current setup, edit code files when needed (simpler, free)
-- **Option 2:** Use a CMS service, update through web interface (more flexible, costs money)
+**Future Option:** Headless CMS (Contentful/Sanity/Strapi) - Visual editor, costs money, better for daily updates.
 
-**My recommendation:** Start with Option 1, upgrade to Option 2 later if needed.
+**Recommendation:** Stick with JSON files unless you need daily updates or have non-technical staff who can't use GitHub.
 

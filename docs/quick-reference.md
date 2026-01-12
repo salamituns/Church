@@ -24,10 +24,11 @@ npm run build
 
 | What You Need | File Location |
 |---------------|---------------|
-| Update pastor info | `lib/cms/client.ts` → `mockPastors` |
-| Update ministries | `lib/cms/client.ts` → `mockMinistries` |
-| Update events | `lib/cms/client.ts` → `getEvents()` method |
-| Update sermons | `lib/cms/client.ts` → `getSermons()` method |
+| Update pastor info | `lib/cms/data/pastors.json` |
+| Update ministries | `lib/cms/data/ministries.json` |
+| Update events | `lib/cms/data/events.json` |
+| Update sermons | `lib/cms/data/sermons.json` |
+| Update testimonials | `lib/cms/data/testimonials.json` |
 | Change homepage | `app/page.tsx` |
 | Change navigation | `components/layout/Navigation.tsx` |
 | Change header | `components/layout/Header.tsx` |
@@ -46,14 +47,16 @@ npm run build
 ### Update Content (Non-Engineers)
 
 1. **Change Pastor Bio**:
-   - Open: `lib/cms/client.ts`
-   - Find: `mockPastors` (around line 23)
+   - Open: `lib/cms/data/pastors.json`
+   - Find the pastor object
    - Edit: Name, title, bio, image URL
+   - Save and commit (or edit on GitHub)
 
 2. **Add New Event**:
-   - Open: `lib/cms/client.ts`
-   - Find: `getEvents()` method (around line 520)
-   - Add new object to `mockEvents` array
+   - Open: `lib/cms/data/events.json`
+   - Add new event object to the array
+   - Use ISO date format: `"2025-01-15T00:00:00.000Z"`
+   - See `lib/cms/data/README.md` for examples
 
 3. **Update Service Times**:
    - Open: `lib/utils/serviceTimes.ts`
@@ -132,9 +135,8 @@ NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_...
 STRIPE_SECRET_KEY=sk_test_...
 NEXT_PUBLIC_BASE_URL=http://localhost:3000
 
-# CMS (if using)
-NEXT_PUBLIC_CMS_API_KEY=...
-NEXT_PUBLIC_CMS_SPACE_ID=...
+# Email Service (optional, for contact form)
+EMAIL_SERVICE_API_KEY=...
 ```
 
 ---

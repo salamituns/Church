@@ -94,15 +94,22 @@ Church/
 
 ### Known Limitations
 
-- Content is currently hardcoded (mock data) - can be upgraded to real CMS
-- No admin dashboard for content management
+- Content is managed via JSON files - can be upgraded to headless CMS if needed
+- No admin dashboard for content management (edit JSON files directly)
 - No user authentication system
 - No database (can be added for donation tracking, etc.)
+
+### Content Management
+
+- ✅ JSON file-based content management (`lib/cms/data/`)
+- ✅ Easy updates via GitHub or local editing
+- ✅ Version controlled in Git
+- 🔄 Can upgrade to headless CMS (Contentful/Sanity/Strapi) later if needed
 
 ### Future Enhancements
 
 See [`enhancement-plan.md`](./enhancement-plan.md) for planned improvements:
-- Real CMS integration (Contentful/Sanity/Strapi)
+- Headless CMS integration (Contentful/Sanity/Strapi) - optional upgrade
 - Admin dashboard for content management
 - Email notifications for donations
 - Donation history and tracking

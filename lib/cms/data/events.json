@@ -1,0 +1,107 @@
+[
+  {
+    "id": "1",
+    "slug": "christmas-service",
+    "title": "Christmas Service",
+    "description": "Join us for a special Christmas celebration with music, worship, and the message of hope.",
+    "date": "2024-12-25T12:00:00.000Z",
+    "time": "10:00 AM",
+    "location": "Main Sanctuary",
+    "image": {
+      "url": "/images/christmas-service-1.webp",
+      "alt": "Christmas Service"
+    },
+    "featured": true,
+    "content": "<div class=\"space-y-8\"><p class=\"text-lg leading-relaxed text-muted-foreground\">Join us as we celebrate the birth of our Savior, Jesus Christ—a time of joy, reflection, and worship.</p><div class=\"border-l-4 border-primary bg-primary/5 p-6 rounded-r-lg\"><h3 class=\"text-lg font-semibold mb-3 text-primary\">Scripture</h3><p class=\"text-lg font-medium italic mb-2\">\"For unto us a child is born, unto us a son is given...\"</p><p class=\"text-sm text-muted-foreground\">Isaiah 9:6 (KJV)</p></div><div class=\"grid gap-4 md:grid-cols-2\"><div class=\"space-y-2\"><h3 class=\"font-semibold\">What to Expect</h3><ul class=\"space-y-1.5 text-sm text-muted-foreground\"><li>• Inspiring worship & carols</li><li>• Powerful message</li><li>• Special performances</li><li>• Communion service</li></ul></div><div class=\"space-y-2\"><h3 class=\"font-semibold\">Reflection</h3><p class=\"text-sm text-muted-foreground\">This celebration reminds us of God's great love—the hope, peace, and eternal life Jesus brings to all who believe.</p></div></div></div>"
+  },
+  {
+    "id": "2",
+    "slug": "new-year-service",
+    "title": "New Year Service",
+    "description": "Start the new year in prayer and worship. Dedicate 2025 to God's purpose.",
+    "date": "2025-01-01T00:00:00.000Z",
+    "time": "10:00 PM",
+    "location": "Main Sanctuary",
+    "image": {
+      "url": "/images/NewYear_service.avif",
+      "alt": "New Year Service"
+    },
+    "featured": true,
+    "content": "<div class=\"space-y-8\"><p class=\"text-lg leading-relaxed text-muted-foreground\">Begin the new year with purpose and dedication. Join us for prayer, worship, and commitment as we dedicate the year to God's will.</p><div class=\"border-l-4 border-primary bg-primary/5 p-6 rounded-r-lg\"><h3 class=\"text-lg font-semibold mb-3 text-primary\">Scripture</h3><p class=\"text-lg font-medium italic mb-2\">\"For I know the plans I have for you... plans to give you hope and a future.\"</p><p class=\"text-sm text-muted-foreground\">Jeremiah 29:11 (NIV)</p></div><div class=\"grid gap-6 md:grid-cols-2\"><div class=\"space-y-3\"><h3 class=\"font-semibold\">Service Highlights</h3><ul class=\"space-y-1.5 text-sm text-muted-foreground\"><li>• Corporate prayer & intercession</li><li>• Year dedication service</li><li>• Prophetic word & vision</li><li>• Testimonies & communion</li></ul></div><div class=\"space-y-3\"><h3 class=\"font-semibold\">New Year Commitments</h3><ul class=\"space-y-1.5 text-sm text-muted-foreground\"><li>• Seek God first (Matthew 6:33)</li><li>• Grow in faith (2 Peter 3:18)</li><li>• Serve with love (Galatians 5:13)</li><li>• Trust God's plan (Proverbs 3:5-6)</li></ul></div></div></div>"
+  },
+  {
+    "id": "7",
+    "slug": "christmas-carol-night",
+    "title": "Christmas Carol Night",
+    "description": "Join us for an evening of Christmas carols, fellowship, and celebration of the birth of Christ.",
+    "date": "2024-12-20T00:00:00.000Z",
+    "time": "7:00 PM",
+    "location": "Main Sanctuary",
+    "image": {
+      "url": "/images/christmas-carol-nigh.webp",
+      "alt": "Christmas Carol Night"
+    },
+    "featured": true,
+    "content": "<div class=\"space-y-8\"><p class=\"text-lg leading-relaxed text-muted-foreground\">Experience the joy of Christmas through beautiful carols, heartfelt worship, and warm fellowship as we celebrate the true meaning of Christmas.</p><div class=\"border-l-4 border-primary bg-primary/5 p-6 rounded-r-lg\"><h3 class=\"text-lg font-semibold mb-3 text-primary\">Scripture</h3><p class=\"text-lg font-medium italic mb-2\">\"Glory to God in the highest, and on earth peace, good will toward men.\"</p><p class=\"text-sm text-muted-foreground\">Luke 2:13-14 (KJV)</p></div><div class=\"grid gap-6 md:grid-cols-2\"><div class=\"space-y-3\"><h3 class=\"font-semibold\">Evening Program</h3><ul class=\"space-y-1.5 text-sm text-muted-foreground\"><li>• Traditional & contemporary carols</li><li>• Special music performances</li><li>• Scripture readings</li><li>• Testimonies & fellowship</li></ul></div><div class=\"space-y-3\"><h3 class=\"font-semibold\">The Power of Worship</h3><p class=\"text-sm text-muted-foreground\">Christmas carols are declarations of faith and proclamations of the good news. As we sing together, we join the angels in declaring \"Glory to God in the highest!\"</p></div></div></div>"
+  },
+  {
+    "id": "8",
+    "slug": "love-feast",
+    "title": "Love Feast",
+    "description": "A special time of fellowship, sharing, and breaking bread together as a community.",
+    "date": "2024-12-21T00:00:00.000Z",
+    "time": "6:00 PM",
+    "location": "Fellowship Hall",
+    "image": {
+      "url": "/images/love_feast.avif",
+      "alt": "Love Feast"
+    },
+    "featured": true,
+    "content": "<div class=\"space-y-8\"><p class=\"text-lg leading-relaxed text-muted-foreground\">Join us for a beautiful time of fellowship where we share a meal, build relationships, and demonstrate Christ's love through unity and mutual encouragement.</p><div class=\"border-l-4 border-primary bg-primary/5 p-6 rounded-r-lg\"><h3 class=\"text-lg font-semibold mb-3 text-primary\">Scripture</h3><p class=\"text-lg font-medium italic mb-2\">\"And they continued stedfastly in... fellowship, and in breaking of bread...\"</p><p class=\"text-sm text-muted-foreground mb-3\">Acts 2:42 (KJV)</p><p class=\"text-lg font-medium italic mb-2\">\"By this shall all men know that ye are my disciples, if ye have love one to another.\"</p><p class=\"text-sm text-muted-foreground\">John 13:35 (KJV)</p></div><div class=\"grid gap-6 md:grid-cols-2\"><div class=\"space-y-3\"><h3 class=\"font-semibold\">What to Expect</h3><ul class=\"space-y-1.5 text-sm text-muted-foreground\"><li>• Shared meal & fellowship</li><li>• Testimonies & sharing</li><li>• Prayer & encouragement</li><li>• Worship & recognition</li></ul></div><div class=\"space-y-3\"><h3 class=\"font-semibold\">The Heart of Fellowship</h3><p class=\"text-sm text-muted-foreground\">We are not meant to walk this journey alone. Just as the early church gathered for fellowship, we need the support and love of our church family. This gathering strengthens our bonds and demonstrates that we are Christ's disciples.</p></div></div></div>"
+  },
+  {
+    "id": "9",
+    "slug": "bible-study-series",
+    "title": "Bible Study Series",
+    "description": "Deep dive into God's Word with our weekly Bible study sessions. Meets every other Wednesday at 7:00 PM.",
+    "date": "2026-01-08T00:00:00.000Z",
+    "time": "7:00 PM",
+    "location": "Main Sanctuary",
+    "image": {
+      "url": "https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=1200&h=800&fit=crop&q=80",
+      "alt": "Bible Study Series"
+    },
+    "featured": true,
+    "content": "<div class=\"space-y-8\"><p class=\"text-lg leading-relaxed text-muted-foreground\">Join us for an in-depth exploration of Scripture. We help you understand God's Word, apply biblical principles to daily life, and grow in your relationship with Christ.</p><div class=\"border-l-4 border-primary bg-primary/5 p-6 rounded-r-lg\"><h3 class=\"text-lg font-semibold mb-3 text-primary\">Scripture</h3><p class=\"text-lg font-medium italic mb-2\">\"Study to shew thyself approved unto God... rightly dividing the word of truth.\"</p><p class=\"text-sm text-muted-foreground mb-3\">2 Timothy 2:15 (KJV)</p><p class=\"text-lg font-medium italic mb-2\">\"Thy word is a lamp unto my feet, and a light unto my path.\"</p><p class=\"text-sm text-muted-foreground\">Psalm 119:105 (KJV)</p></div><div class=\"grid gap-6 md:grid-cols-2\"><div class=\"space-y-3\"><h3 class=\"font-semibold\">Study Format</h3><ul class=\"space-y-1.5 text-sm text-muted-foreground\"><li>• Verse-by-verse study</li><li>• Interactive discussions</li><li>• Practical application</li><li>• Prayer & reflection</li></ul></div><div class=\"space-y-3\"><h3 class=\"font-semibold\">Why It Matters</h3><ul class=\"space-y-1.5 text-sm text-muted-foreground\"><li>• Reveals God's will</li><li>• Provides wisdom & guidance</li><li>• Strengthens faith</li><li>• Transforms thinking (Romans 12:2)</li></ul></div></div></div>"
+  },
+  {
+    "id": "10",
+    "slug": "faith-clinic",
+    "title": "Faith Clinic",
+    "description": "A place for healing, restoration, and spiritual growth through prayer and the Word. Alternates with Bible Study Series, meets every other Wednesday at 7:00 PM.",
+    "date": "2026-01-15T00:00:00.000Z",
+    "time": "7:00 PM",
+    "location": "Main Sanctuary",
+    "image": {
+      "url": "/images/faith_clinic.avif",
+      "alt": "Faith Clinic"
+    },
+    "featured": true,
+    "content": "<div class=\"space-y-8\"><p class=\"text-lg leading-relaxed text-muted-foreground\">A dedicated time for healing, restoration, and breakthrough. Through prayer, worship, and God's Word, we seek His intervention for physical, emotional, and spiritual healing.</p><div class=\"border-l-4 border-primary bg-primary/5 p-6 rounded-r-lg\"><h3 class=\"text-lg font-semibold mb-3 text-primary\">Scripture</h3><p class=\"text-lg font-medium italic mb-2\">\"...with his stripes we are healed.\"</p><p class=\"text-sm text-muted-foreground mb-3\">Isaiah 53:5 (KJV)</p><p class=\"text-lg font-medium italic mb-2\">\"The prayer of faith shall save the sick, and the Lord shall raise him up.\"</p><p class=\"text-sm text-muted-foreground\">James 5:14-15 (KJV)</p></div><div class=\"grid gap-6 md:grid-cols-2\"><div class=\"space-y-3\"><h3 class=\"font-semibold\">Service Elements</h3><ul class=\"space-y-1.5 text-sm text-muted-foreground\"><li>• Intimate worship & prayer</li><li>• Teaching on faith & healing</li><li>• Corporate intercession</li><li>• Individual prayer & anointing</li></ul></div><div class=\"space-y-3\"><h3 class=\"font-semibold\">Our Belief</h3><ul class=\"space-y-1.5 text-sm text-muted-foreground\"><li>• God desires to heal (3 John 1:2)</li><li>• Power of prayer & faith (Mark 11:24)</li><li>• Jesus' authority over sickness (Matthew 8:17)</li><li>• Believe and receive (Mark 5:34)</li></ul></div></div></div>"
+  },
+  {
+    "id": "11",
+    "slug": "youth-ministry",
+    "title": "Youth Ministry",
+    "description": "Empowering the next generation of believers. Meets every third Sunday of the month at 10:00 AM.",
+    "date": "2026-01-19T00:00:00.000Z",
+    "time": "10:00 AM",
+    "location": "Main Sanctuary",
+    "image": {
+      "url": "/images/youth_activities.avif",
+      "alt": "Youth Ministry"
+    },
+    "featured": true,
+    "content": "<div class=\"space-y-8\"><p class=\"text-lg leading-relaxed text-muted-foreground\">Empowering the next generation to live boldly for Christ. Through dynamic worship, relevant teaching, and authentic community, we help young people discover their purpose and make an impact.</p><div class=\"border-l-4 border-primary bg-primary/5 p-6 rounded-r-lg\"><h3 class=\"text-lg font-semibold mb-3 text-primary\">Scripture</h3><p class=\"text-lg font-medium italic mb-2\">\"Let no man despise thy youth; but be thou an example of the believers...\"</p><p class=\"text-sm text-muted-foreground mb-3\">1 Timothy 4:12 (KJV)</p><p class=\"text-lg font-medium italic mb-2\">\"Remember now thy Creator in the days of thy youth...\"</p><p class=\"text-sm text-muted-foreground\">Ecclesiastes 12:1 (KJV)</p></div><div class=\"grid gap-6 md:grid-cols-2\"><div class=\"space-y-3\"><h3 class=\"font-semibold\">What We Offer</h3><ul class=\"space-y-1.5 text-sm text-muted-foreground\"><li>• Dynamic worship & praise</li><li>• Relevant Bible teaching</li><li>• Small groups & mentorship</li><li>• Outreach & service projects</li></ul></div><div class=\"space-y-3\"><h3 class=\"font-semibold\">Our Vision</h3><ul class=\"space-y-1.5 text-sm text-muted-foreground\"><li>• Equip with biblical foundation</li><li>• Discover God-given gifts</li><li>• Create safe, authentic space</li><li>• Empower as leaders & influencers</li></ul></div></div></div>"
+  }
+]

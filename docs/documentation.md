@@ -51,7 +51,9 @@ This is a modern, responsive website for **RCCG Shiloh Mega Parish** in Sugar La
 ## What We Built
 
 ### 1. **Homepage** (`/`)
+
 The main landing page featuring:
+
 - **Hero Section**: Eye-catching banner with call-to-action
 - **Service Schedule**: Times for Sunday services and midweek activities
 - **Latest Sermon**: Most recent sermon with video/audio player
@@ -62,25 +64,30 @@ The main landing page featuring:
 - **Testimonials**: Member testimonials
 
 ### 2. **About Pages** (`/about`, `/about/pastors`)
+
 - Church information and history
 - Detailed pastor profiles with bios and photos
 
 ### 3. **Ministries** (`/ministries`, `/ministries/[slug]`)
+
 - Grid view of all ministries
 - Individual ministry pages with detailed information
 - Categories: Age Groups, Service, Community
 
 ### 4. **Events** (`/events`, `/events/[slug]`)
+
 - Calendar view of all events
 - Individual event pages with full details
 - Featured events highlighted on homepage
 
 ### 5. **Sermons** (`/sermons`, `/sermons/[slug]`)
+
 - Archive of all sermons
 - Individual sermon pages with video/audio players
 - Latest sermon featured on homepage
 
 ### 6. **Online Giving** (`/give`, `/give/thank-you`)
+
 - Secure donation form
 - One-time donations
 - Recurring donations (weekly/monthly)
@@ -88,6 +95,7 @@ The main landing page featuring:
 - Thank you confirmation page
 
 ### 7. **Visit/Contact** (`/visit`)
+
 - Service times and location
 - Contact information
 - Contact form
@@ -97,38 +105,47 @@ The main landing page featuring:
 ## Technology Stack
 
 ### Core Framework
+
 - **Next.js 14+** (App Router): React framework for building the website
   - Why: Server-side rendering, automatic code splitting, excellent performance
   - Version: 14.2.0
 
 ### Programming Language
+
 - **TypeScript**: Type-safe JavaScript
   - Why: Catches errors early, better code documentation, easier maintenance
 
 ### Styling
+
 - **Tailwind CSS**: Utility-first CSS framework
   - Why: Fast development, consistent design, responsive by default
 - **shadcn/ui**: Pre-built accessible components
   - Why: Beautiful, accessible components built on Radix UI
 
 ### Forms & Validation
+
 - **React Hook Form**: Form state management
 - **Zod**: Schema validation
   - Why: Type-safe validation, excellent error handling
 
 ### Animations
+
 - **Framer Motion**: Animation library
   - Why: Smooth, performant animations
 
 ### Payment Processing
+
 - **Stripe**: Payment gateway
   - Why: Industry standard, secure, handles PCI compliance
 
 ### Content Management
-- **Current**: Mock data in code (can be upgraded to headless CMS)
-- **Future Options**: Contentful, Sanity, or Strapi
+
+- **Current**: JSON file-based (`lib/cms/data/*.json`)
+- **Benefits**: Free, simple, version controlled, easy to update via GitHub
+- **Future Options**: Can upgrade to headless CMS (Contentful, Sanity, or Strapi) if needed
 
 ### Development Tools
+
 - **TypeScript**: Type checking
 - **ESLint**: Code quality
 - **Sharp**: Image optimization
@@ -220,7 +237,8 @@ Church/
 │
 ├── lib/                         # Utility libraries
 │   ├── cms/                    # Content Management System
-│   │   ├── client.ts          # CMS client (currently mock data)
+│   │   ├── client.ts          # CMS client (reads JSON files)
+│   │   ├── data/              # JSON content files
 │   │   ├── queries.ts         # Data fetching functions
 │   │   └── types.ts           # TypeScript type definitions
 │   │
@@ -264,7 +282,7 @@ Church/
 1. **User visits a URL** (e.g., `https://rccgshilohmega.org/ministries`)
 2. **Next.js receives the request** and matches it to a route in `app/ministries/page.tsx`
 3. **Server-side data fetching**: The page component calls `getMinistries()` from `lib/cms/queries.ts`
-4. **Data retrieval**: `queries.ts` calls `cmsClient.getMinistries()` which returns data (currently from mock data in `client.ts`)
+4. **Data retrieval**: `queries.ts` calls `cmsClient.getMinistries()` which reads from JSON files in `lib/cms/data/`
 5. **Page rendering**: Next.js renders the React component with the data
 6. **HTML sent to browser**: The fully rendered page is sent to the user
 7. **Client-side hydration**: React takes over for interactivity
@@ -298,8 +316,8 @@ RootLayout (app/layout.tsx)
 
 ```
 ┌─────────────────────────────────────────────────────────┐
-│ 1. Content Source (Currently: Mock Data)              │
-│    Location: lib/cms/client.ts                         │
+│ 1. Content Source (JSON Files in lib/cms/data/)     │
+│    Location: lib/cms/data/*.json                       │
 │    Contains: Pastors, Ministries, Events, Sermons, etc. │
 └──────────────────┬─────────────────────────────────────┘
                    │
@@ -396,6 +414,7 @@ User fills donation form
 **Decision**: Use Next.js 14+ App Router instead of the older Pages Router.
 
 **Why**:
+
 - ✅ Better performance with React Server Components
 - ✅ Simpler data fetching (async components)
 - ✅ Better code organization
@@ -408,6 +427,7 @@ User fills donation form
 **Decision**: Use TypeScript for all code.
 
 **Why**:
+
 - ✅ Catches errors before runtime
 - ✅ Better IDE support and autocomplete
 - ✅ Self-documenting code (types explain what data looks like)
@@ -415,38 +435,42 @@ User fills donation form
 
 **Impact**: All files use `.ts` or `.tsx` extensions, strict type checking enabled.
 
-### 3. **Mock Data (Not Real CMS Initially)**
+### 3. **JSON File-Based Content (Not CMS Initially)**
 
-**Decision**: Start with hardcoded mock data in `lib/cms/client.ts`.
+**Decision**: Use JSON files in `lib/cms/data/` for content management.
 
 **Why**:
-- ✅ No additional cost
-- ✅ Faster initial development
-- ✅ Can upgrade to real CMS later without changing page components
-- ✅ Simple for small churches with infrequent updates
 
-**Impact**: Content updates require editing code files. Can be upgraded to Contentful/Sanity/Strapi later.
+- ✅ No additional cost (free)
+- ✅ Simple to understand and update
+- ✅ Version controlled in Git
+- ✅ Can edit on GitHub (no code knowledge needed)
+- ✅ Can upgrade to headless CMS later without changing page components
 
-**See**: [`guides/cms-explanation.md`](./guides/cms-explanation.md) for details on upgrading to a real CMS.
+**Impact**: Content updates require editing JSON files in `lib/cms/data/`. Can be upgraded to Contentful/Sanity/Strapi later if needed.
+
+**See**: `[guides/cms-explanation.md](./guides/cms-explanation.md)` for details on content management and upgrading to a CMS.
 
 ### 4. **Stripe for Payments**
 
 **Decision**: Use Stripe instead of PayPal or other payment processors.
 
 **Why**:
+
 - ✅ Industry standard, trusted by millions
 - ✅ Handles PCI compliance (we never touch card numbers)
 - ✅ Supports both one-time and recurring donations
 - ✅ Excellent documentation and support
 - ✅ Automatic receipt emails
 
-**Impact**: Requires Stripe account and API keys. See [`guides/stripe-setup.md`](./guides/stripe-setup.md) for setup.
+**Impact**: Requires Stripe account and API keys. See `[guides/stripe-setup.md](./guides/stripe-setup.md)` for setup.
 
 ### 5. **shadcn/ui Components**
 
 **Decision**: Use shadcn/ui instead of Material UI or other component libraries.
 
 **Why**:
+
 - ✅ Copy-paste components (not a dependency)
 - ✅ Built on Radix UI (accessible by default)
 - ✅ Fully customizable with Tailwind
@@ -459,6 +483,7 @@ User fills donation form
 **Decision**: Use Tailwind CSS for all styling.
 
 **Why**:
+
 - ✅ Fast development (utility classes)
 - ✅ Consistent design system
 - ✅ Responsive by default
@@ -471,6 +496,7 @@ User fills donation form
 **Decision**: Render pages on the server, not just in the browser.
 
 **Why**:
+
 - ✅ Faster initial page load
 - ✅ Better SEO (search engines see full content)
 - ✅ Works even if JavaScript is disabled
@@ -483,6 +509,7 @@ User fills donation form
 **Decision**: Break UI into small, reusable components.
 
 **Why**:
+
 - ✅ Reusable code (write once, use many times)
 - ✅ Easier to maintain (fix bug in one place)
 - ✅ Easier to test
@@ -597,44 +624,59 @@ User fills donation form
 
 ### For Non-Engineers (Content Updates)
 
+All content is stored in JSON files in `lib/cms/data/`. You can edit these files directly on GitHub or locally.
+
 #### Update Pastor Information
-**File**: `lib/cms/client.ts`  
-**Look for**: `mockPastors` array (around line 23)  
+
+**File**: `lib/cms/data/pastors.json`  
 **What to change**: Name, title, bio, image URL
 
-```typescript
+```json
 {
-  id: "1",
-  name: "Pastor Moses Olise",  // ← Change name here
-  title: "Provincial Pastor",  // ← Change title here
-  bio: "Leading with vision...", // ← Change bio here
-  image: {
-    url: "/images/pastorOlise.webp", // ← Change image path here
-    alt: "Pastor Moses Olise",
-  },
+  "id": "1",
+  "name": "Pastor Moses Olise",
+  "title": "Provincial Pastor",
+  "bio": "Leading with vision and passion for God's work.",
+  "image": {
+    "url": "/images/pastorOlise.webp",
+    "alt": "Pastor Moses Olise"
+  }
 }
 ```
 
 #### Update Ministries
-**File**: `lib/cms/client.ts`  
-**Look for**: `mockMinistries` array (around line 46)  
-**What to change**: Title, description, content, image
+
+**File**: `lib/cms/data/ministries.json`  
+**What to change**: Title, description, content, image, category
 
 #### Update Events
-**File**: `lib/cms/client.ts`  
-**Look for**: `getEvents()` method (around line 520)  
-**What to change**: Event details in the `mockEvents` array
+
+**File**: `lib/cms/data/events.json`  
+**What to change**: Event details (title, date, time, location, description, image)
+
+**Note**: Dates must be in ISO format: `"2025-01-15T00:00:00.000Z"`
 
 #### Update Sermons
-**File**: `lib/cms/client.ts`  
-**Look for**: `getSermons()` method (around line 846)  
-**What to change**: Sermon details in the `mockSermons` array
+
+**File**: `lib/cms/data/sermons.json`  
+**What to change**: Sermon details (title, date, speaker, video/audio URLs, image)
+
+**Note**: Dates must be in ISO format: `"2025-01-15T00:00:00.000Z"`
+
+#### Update Testimonials
+
+**File**: `lib/cms/data/testimonials.json`  
+**What to change**: Name, role, content
+
+**See**: `lib/cms/data/README.md` for detailed instructions and examples.
 
 #### Update Service Times
+
 **File**: `lib/utils/serviceTimes.ts`  
 **What to change**: Service schedule times
 
 #### Update Contact Information
+
 **File**: `app/visit/page.tsx`  
 **What to change**: Address, phone, email
 
@@ -643,11 +685,13 @@ User fills donation form
 ### For Engineers (Code Changes)
 
 #### Add a New Page
+
 1. Create new directory in `app/` (e.g., `app/news/`)
 2. Create `page.tsx` file
 3. Add navigation link in `components/layout/Navigation.tsx`
 
 **Example**:
+
 ```typescript
 // app/news/page.tsx
 export default function NewsPage() {
@@ -656,11 +700,13 @@ export default function NewsPage() {
 ```
 
 #### Add a New Component
+
 1. Create file in appropriate `components/` subdirectory
 2. Export component
 3. Import and use in pages
 
 **Example**:
+
 ```typescript
 // components/sections/NewsSection.tsx
 export function NewsSection() {
@@ -669,16 +715,19 @@ export function NewsSection() {
 ```
 
 #### Modify Styling
+
 - **Global styles**: `app/globals.css`
 - **Component styles**: Use Tailwind classes in component files
 - **Theme colors**: `tailwind.config.ts`
 
 #### Add New API Route
+
 1. Create directory in `app/api/` (e.g., `app/api/send-email/`)
 2. Create `route.ts` file
 3. Export HTTP methods (GET, POST, etc.)
 
 **Example**:
+
 ```typescript
 // app/api/send-email/route.ts
 export async function POST(request: Request) {
@@ -689,68 +738,84 @@ export async function POST(request: Request) {
 ```
 
 #### Change Payment Processing
+
 - **Donation form**: `components/forms/DonationForm.tsx`
 - **Payment intent creation**: `app/api/create-payment-intent/route.ts`
 - **Webhook handling**: `app/api/webhook/route.ts`
 
 #### Update Navigation
+
 **File**: `components/layout/Navigation.tsx`  
 **What to change**: Menu items, links, dropdown menus
 
 #### Modify Layout (Header/Footer)
+
 - **Header**: `components/layout/Header.tsx`
 - **Footer**: `components/layout/Footer.tsx`
 - **Root layout**: `app/layout.tsx`
 
 #### Add Animation
+
 **Files**: `components/animations/`  
 **Usage**: Wrap components with animation components
 
 **Example**:
+
 ```typescript
 <FadeInOnScroll>
   <div>This fades in when scrolled into view</div>
 </FadeInOnScroll>
 ```
 
-#### Integrate Real CMS
+#### Upgrade to Headless CMS (Future)
+
+If you need a CMS later:
+
 1. Install CMS SDK (e.g., `npm install contentful`)
-2. Update `lib/cms/client.ts` to use real API calls
+2. Update `lib/cms/client.ts` to use CMS API calls instead of JSON imports
 3. Add environment variables for API keys
 4. Update `.env.local` with credentials
 
-**See**: [`guides/cms-explanation.md`](./guides/cms-explanation.md) for detailed guide.
+**See**: `[guides/cms-explanation.md](./guides/cms-explanation.md)` for detailed guide.
+
+**Note**: Current JSON file approach works great for most churches. Only upgrade if you need daily updates or have non-technical staff who can't use GitHub.
 
 ---
 
 ### Common Change Scenarios
 
 #### Scenario 1: Add a New Ministry
-1. Open `lib/cms/client.ts`
-2. Find `mockMinistries` array
-3. Add new ministry object with: id, slug, title, description, image, category, content
-4. Save and redeploy
+
+1. Open `lib/cms/data/ministries.json`
+2. Add new ministry object to the array with: id, slug, title, description, image, category, content
+3. Save and commit (or edit on GitHub)
+4. Website updates automatically (if using Vercel)
 
 #### Scenario 2: Change Homepage Layout
+
 1. Open `app/page.tsx`
 2. Reorder, add, or remove sections
 3. Each section is a component from `components/sections/`
 
 #### Scenario 3: Update Church Logo
+
 1. Replace image in `public/images/`
 2. Update reference in `components/layout/Header.tsx` (line ~34)
 
 #### Scenario 4: Change Color Scheme
+
 1. Open `tailwind.config.ts`
 2. Modify `colors` in theme
 3. Colors cascade to all components
 
 #### Scenario 5: Add New Donation Amount Preset
+
 1. Open `components/forms/DonationForm.tsx`
 2. Find donation amount buttons
 3. Add new button with amount value
 
 #### Scenario 6: Update Footer Links
+
 1. Open `components/layout/Footer.tsx`
 2. Modify links in footer sections
 
@@ -767,38 +832,23 @@ export async function POST(request: Request) {
 ### Initial Setup
 
 1. **Clone the repository** (if not already done):
-   ```bash
+  ```bash
    git clone <repository-url>
    cd Church
-   ```
-
+  ```
 2. **Install dependencies**:
-   ```bash
+  ```bash
    npm install
-   ```
-
+  ```
 3. **Set up environment variables**:
-   ```bash
+  ```bash
    cp .env.example .env.local
-   ```
-   
+  ```
    Edit `.env.local` and add:
-   ```env
-   # Stripe (for donations)
-   NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_...
-   STRIPE_SECRET_KEY=sk_test_...
-   NEXT_PUBLIC_BASE_URL=http://localhost:3000
-   
-   # CMS (if using real CMS)
-   NEXT_PUBLIC_CMS_API_KEY=...
-   NEXT_PUBLIC_CMS_SPACE_ID=...
-   ```
-
 4. **Run development server**:
-   ```bash
+  ```bash
    npm run dev
-   ```
-
+  ```
 5. **Open browser**: Navigate to `http://localhost:3000`
 
 ### Available Scripts
@@ -830,14 +880,15 @@ export async function POST(request: Request) {
 ### Testing Checklist
 
 Before deploying, test:
-- [ ] All pages load correctly
-- [ ] Navigation works (desktop and mobile)
-- [ ] Forms submit successfully
-- [ ] Donation flow works (use test card: 4242 4242 4242 4242)
-- [ ] Images load properly
-- [ ] Responsive design works on phone/tablet/desktop
-- [ ] No console errors
-- [ ] Links work correctly
+
+- All pages load correctly
+- Navigation works (desktop and mobile)
+- Forms submit successfully
+- Donation flow works (use test card: 4242 4242 4242 4242)
+- Images load properly
+- Responsive design works on phone/tablet/desktop
+- No console errors
+- Links work correctly
 
 ### Debugging Tips
 
@@ -854,36 +905,33 @@ Before deploying, test:
 ### Recommended: Vercel (Easiest)
 
 1. **Push code to GitHub**:
-   ```bash
+  ```bash
    git add .
    git commit -m "Ready for deployment"
    git push origin main
-   ```
-
+  ```
 2. **Import to Vercel**:
-   - Go to [vercel.com](https://vercel.com)
-   - Click "Import Project"
-   - Select your GitHub repository
-   - Vercel auto-detects Next.js
-
+  - Go to [vercel.com](https://vercel.com)
+  - Click "Import Project"
+  - Select your GitHub repository
+  - Vercel auto-detects Next.js
 3. **Add environment variables**:
-   - In Vercel dashboard → Settings → Environment Variables
-   - Add all variables from `.env.local`
-   - Use production Stripe keys (not test keys)
-
+  - In Vercel dashboard → Settings → Environment Variables
+  - Add all variables from `.env.local`
+  - Use production Stripe keys (not test keys)
 4. **Deploy**:
-   - Click "Deploy"
-   - Wait for build to complete
-   - Get your live URL (e.g., `https://rccgshilohmega.vercel.app`)
-
+  - Click "Deploy"
+  - Wait for build to complete
+  - Get your live URL (e.g., `https://rccgshilohmega.vercel.app`)
 5. **Set up custom domain** (optional):
-   - In Vercel dashboard → Settings → Domains
-   - Add your domain (e.g., `rccgshilohmega.org`)
-   - Follow DNS configuration instructions
+  - In Vercel dashboard → Settings → Domains
+  - Add your domain (e.g., `rccgshilohmega.org`)
+  - Follow DNS configuration instructions
 
 ### Alternative: Other Platforms
 
 The site can be deployed to any platform that supports Next.js:
+
 - **Netlify**: Similar to Vercel, good alternative
 - **AWS Amplify**: For AWS users
 - **Railway**: Simple deployment platform
@@ -891,15 +939,15 @@ The site can be deployed to any platform that supports Next.js:
 
 ### Pre-Deployment Checklist
 
-- [ ] All environment variables configured
-- [ ] Stripe keys are production keys (not test)
-- [ ] Custom domain configured (if applicable)
-- [ ] All content updated (pastors, ministries, events)
-- [ ] Images optimized and uploaded
-- [ ] Test donation flow with real card (small amount)
-- [ ] Test all pages and links
-- [ ] Set up webhook URL in Stripe dashboard
-- [ ] Configure email notifications (if applicable)
+- All environment variables configured
+- Stripe keys are production keys (not test)
+- Custom domain configured (if applicable)
+- All content updated (pastors, ministries, events)
+- Images optimized and uploaded
+- Test donation flow with real card (small amount)
+- Test all pages and links
+- Set up webhook URL in Stripe dashboard
+- Configure email notifications (if applicable)
 
 ### Post-Deployment
 
@@ -907,7 +955,7 @@ The site can be deployed to any platform that supports Next.js:
 2. **Set up monitoring**: Consider adding error tracking (Sentry, etc.)
 3. **Set up analytics**: Add Google Analytics or similar
 4. **Backup**: Ensure code is in version control (GitHub)
-5. **Documentation**: Update any hardcoded URLs in code/docs
+5. **Documentation**: Update any hardcoded URLs in code/docs (if any)
 
 ---
 
@@ -918,6 +966,7 @@ The site can be deployed to any platform that supports Next.js:
 **Initial Release**
 
 **Features**:
+
 - ✅ Complete website with all pages
 - ✅ Online donation system (Stripe integration)
 - ✅ Event management and display
@@ -929,6 +978,7 @@ The site can be deployed to any platform that supports Next.js:
 - ✅ Animations and smooth interactions
 
 **Technology Stack**:
+
 - Next.js 14.2.0
 - TypeScript 5.5.0
 - Tailwind CSS 3.4.0
@@ -937,12 +987,14 @@ The site can be deployed to any platform that supports Next.js:
 - shadcn/ui components
 
 **Known Limitations**:
-- Content is hardcoded (mock data)
+
+- Content is managed via JSON files (can upgrade to CMS if needed)
 - No admin dashboard
 - No user authentication
 - No database (can be added later)
 
-**Future Enhancements** (See [`project/enhancement-plan.md`](./project/enhancement-plan.md)):
+**Future Enhancements** (See `[project/enhancement-plan.md](./project/enhancement-plan.md)`):
+
 - Real CMS integration
 - Admin dashboard
 - Email notifications
@@ -964,11 +1016,11 @@ The site can be deployed to any platform that supports Next.js:
 
 ### External Resources
 
-- **Next.js Docs**: https://nextjs.org/docs
-- **TypeScript Docs**: https://www.typescriptlang.org/docs
-- **Tailwind CSS Docs**: https://tailwindcss.com/docs
-- **Stripe Docs**: https://stripe.com/docs
-- **shadcn/ui Docs**: https://ui.shadcn.com
+- **Next.js Docs**: [https://nextjs.org/docs](https://nextjs.org/docs)
+- **TypeScript Docs**: [https://www.typescriptlang.org/docs](https://www.typescriptlang.org/docs)
+- **Tailwind CSS Docs**: [https://tailwindcss.com/docs](https://tailwindcss.com/docs)
+- **Stripe Docs**: [https://stripe.com/docs](https://stripe.com/docs)
+- **shadcn/ui Docs**: [https://ui.shadcn.com](https://ui.shadcn.com)
 
 ### Getting Help
 
@@ -992,7 +1044,7 @@ The site can be deployed to any platform that supports Next.js:
 
 **Environment Variables**: Secret configuration values (API keys, etc.) stored in `.env.local`
 
-**Mock Data**: Fake/hardcoded data used for development (instead of real database)
+**JSON Files**: Content stored in JSON files in `lib/cms/data/` - simple, free, and easy to update
 
 **Server-Side Rendering (SSR)**: Rendering pages on the server before sending to browser
 

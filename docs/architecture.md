@@ -31,7 +31,7 @@
              ▼                      ▼
     ┌─────────────────┐    ┌─────────────────┐
     │  CMS Client     │    │  Stripe API     │
-    │  (Mock Data)    │    │  (Payments)     │
+    │  JSON Files     │    │  (Payments)     │
     └─────────────────┘    └─────────────────┘
 ```
 
@@ -104,14 +104,14 @@ RootLayout (app/layout.tsx)
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│  Content Source (lib/cms/client.ts)                         │
+│  Content Source (lib/cms/data/*.json)                       │
 │  ┌───────────────────────────────────────────────────────┐ │
-│  │  Mock Data:                                           │ │
-│  │  - mockPastors[]                                      │ │
-│  │  - mockMinistries[]                                   │ │
-│  │  - mockEvents[]                                       │ │
-│  │  - mockSermons[]                                      │ │
-│  │  - mockTestimonials[]                                 │ │
+│  │  JSON Files:                                          │ │
+│  │  - pastors.json                                       │ │
+│  │  - ministries.json                                    │ │
+│  │  - events.json                                        │ │
+│  │  - sermons.json                                       │ │
+│  │  - testimonials.json                                  │ │
 │  └───────────────────────────────────────────────────────┘ │
 └───────────────────────────┬─────────────────────────────────┘
                             │
@@ -302,7 +302,8 @@ Church/
 │
 ├── lib/                        # Utilities & Libraries
 │   ├── cms/                    # Content Management
-│   │   ├── client.ts          # CMS client (mock data)
+│   │   ├── client.ts          # CMS client (reads JSON files)
+│   │   ├── data/              # JSON content files
 │   │   ├── queries.ts         # Data fetching functions
 │   │   └── types.ts           # TypeScript types
 │   │
@@ -344,7 +345,7 @@ Church/
                         ▼
 ┌─────────────────────────────────────────────────────────┐
 │  Data Layer                                             │
-│  - CMS Client (Mock Data)                               │
+│  - CMS Client (JSON Files)                             │
 │  - Query Functions                                      │
 │  - Type Definitions                                     │
 └─────────────────────────────────────────────────────────┘
@@ -380,7 +381,7 @@ Church/
    │
    ▼
 5. CMS Client returns:
-   - mockMinistries array
+   - Data from ministries.json file
    │
    ▼
 6. Page component receives data:
@@ -603,14 +604,15 @@ Vercel Platform
 ## Future Architecture (With Real CMS)
 
 ```
-Current (Mock Data)
+Current (JSON Files)
 ┌─────────────────┐
 │  lib/cms/        │
-│  client.ts       │
-│  (Hardcoded)    │
+│  data/           │
+│  *.json          │
+│  (JSON Files)   │
 └─────────────────┘
 
-Future (Real CMS)
+Future (Headless CMS)
 ┌─────────────────┐
 │  Contentful/     │
 │  Sanity/Strapi  │
@@ -626,7 +628,7 @@ Future (Real CMS)
 └─────────────────┘
 ```
 
-**Note**: The page components and UI remain unchanged. Only `lib/cms/client.ts` needs to be updated.
+**Note**: The page components and UI remain unchanged. Only `lib/cms/client.ts` needs to be updated to swap JSON imports for CMS API calls.
 
 ---
 

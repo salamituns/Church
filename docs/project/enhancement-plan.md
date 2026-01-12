@@ -10,7 +10,7 @@ This plan outlines the implementation of enhancements inspired by RCCG HGM, Hoop
 
 **Changes Required**:
 - Update `lib/cms/types.ts` - Add `category` field to Ministry interface
-- Update `lib/cms/client.ts` - Add category to mock ministries
+- Update `lib/cms/data/ministries.json` - Add category to ministries
 - Create `components/sections/MinistryCategories.tsx` - Category filter/tabs component
 - Update `app/ministries/page.tsx` - Add category filtering
 - Update `components/sections/MinistryGrid.tsx` - Support category grouping
@@ -152,7 +152,7 @@ lib/
 ### Modified Files
 ```
 lib/cms/types.ts                       # Add category, featured fields
-lib/cms/client.ts                      # Update mock data
+lib/cms/data/ministries.json           # Update ministry data
 lib/cms/queries.ts                     # Add getLatestSermon()
 components/sections/HeroSection.tsx    # Add countdown
 components/sections/MinistryGrid.tsx   # Add category support
