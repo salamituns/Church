@@ -4,7 +4,7 @@ A modern, welcoming church website built with Next.js 14+, TypeScript, and Tailw
 
 ## Features
 
-- **Modern Design**: Clean, welcoming interface with warm color palette
+- **Modern Design**: Clean, welcoming interface with warm color palette..
 - **Responsive**: Fully responsive design that works on all devices
 - **Performance Optimized**: Fast loading times with Next.js optimizations
 - **Accessible**: WCAG 2.1 AA compliant with proper ARIA labels
