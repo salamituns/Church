@@ -6,9 +6,12 @@ export const metadata = {
 }
 
 export default function GivePage() {
+  const stripePublishableKey = 
+  process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || 
+  process.env.STRIPE_PUBLIC_KEY
   return (
     <div className="container py-12">
-      <DonationForm />
+      <DonationForm stripePublishableKey={stripePublishableKey} />
     </div>
   )
 }

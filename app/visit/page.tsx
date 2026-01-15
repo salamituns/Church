@@ -29,7 +29,7 @@ export default function VisitPage() {
           <CardContent>
             <div className="aspect-video w-full overflow-hidden rounded-lg bg-muted">
               <iframe
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3466.1!2d-95.6089!3d29.5377!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8640e5d5d5d5d5d5%3A0x0!2s10130+Belknap+Rd%2C+Sugar+Land%2C+TX+77478!5e0!3m2!1sen!2sus!4v1703000000000"
+                src="https://www.google.com/maps?q=10130+Belknap+Rd,+Sugar+Land,+TX+77478&output=embed"
                 width="100%"
                 height="100%"
                 style={{ border: 0 }}
@@ -67,15 +67,19 @@ export default function VisitPage() {
           <CardContent className="space-y-4">
             <div>
               <p className="font-semibold">Sunday Service</p>
-              <p className="text-muted-foreground">10:00 AM</p>
+              <p className="text-muted-foreground">Every Sunday at 9:20 AM</p>
             </div>
             <div>
-              <p className="font-semibold">Wednesday</p>
-              <p className="text-muted-foreground">7:00 PM - Digging Deep / Faith Clinic</p>
+              <p className="font-semibold">Digging Deep / Faith Clinic</p>
+              <p className="text-muted-foreground">Every Wednesday at 7:00 PM</p>
             </div>
             <div>
-              <p className="font-semibold">Last Sunday of Month</p>
-              <p className="text-muted-foreground">10:00 AM - Anointing Service</p>
+              <p className="font-semibold">Youth Ministry</p>
+              <p className="text-muted-foreground">3rd Sunday of each month at 9:20 AM</p>
+            </div>
+            <div>
+              <p className="font-semibold">Thanksgiving Service</p>
+              <p className="text-muted-foreground">1st Sunday of each month at 9:20 AM</p>
             </div>
           </CardContent>
         </Card>

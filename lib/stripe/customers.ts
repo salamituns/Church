@@ -1,6 +1,7 @@
 // Stripe customer management functions
 import { stripe } from '../stripe'
 import Stripe from 'stripe'
+import { logger } from '@/lib/logger'
 
 /**
  * Find or create a Stripe customer
@@ -12,7 +13,7 @@ export async function findOrCreateCustomer(input: {
   metadata?: Record<string, string>
 }): Promise<Stripe.Customer | null> {
   if (!stripe) {
-    console.error('Stripe is not configured')
+    logger.warn('Stripe is not configured')
     return null
   }
 
@@ -24,7 +25,7 @@ export async function findOrCreateCustomer(input: {
     })
 
     if (existingCustomers.data.length > 0) {
-      console.log('Found existing Stripe customer:', existingCustomers.data[0].id)
+      logger.info({ customerId: existingCustomers.data[0].id }, 'Found existing Stripe customer')
       return existingCustomers.data[0]
     }
 
@@ -36,10 +37,10 @@ export async function findOrCreateCustomer(input: {
       metadata: input.metadata || {},
     })
 
-    console.log('Created new Stripe customer:', customer.id)
+    logger.info({ customerId: customer.id }, 'Created new Stripe customer')
     return customer
   } catch (error) {
-    console.error('Error finding/creating customer:', error)
+    logger.error({ error }, 'Error finding/creating customer')
     return null
   }
 }
@@ -49,7 +50,7 @@ export async function findOrCreateCustomer(input: {
  */
 export async function getCustomer(customerId: string): Promise<Stripe.Customer | null> {
   if (!stripe) {
-    console.error('Stripe is not configured')
+    logger.warn('Stripe is not configured')
     return null
   }
 
@@ -60,7 +61,7 @@ export async function getCustomer(customerId: string): Promise<Stripe.Customer |
     }
     return customer as Stripe.Customer
   } catch (error) {
-    console.error('Error retrieving customer:', error)
+    logger.error({ error, customerId }, 'Error retrieving customer')
     return null
   }
 }
@@ -78,16 +79,16 @@ export async function updateCustomer(
   }
 ): Promise<Stripe.Customer | null> {
   if (!stripe) {
-    console.error('Stripe is not configured')
+    logger.warn('Stripe is not configured')
     return null
   }
 
   try {
     const customer = await stripe.customers.update(customerId, updates)
-    console.log('Updated customer:', customer.id)
+    logger.info({ customerId: customer.id }, 'Updated customer')
     return customer
   } catch (error) {
-    console.error('Error updating customer:', error)
+    logger.error({ error, customerId }, 'Error updating customer')
     return null
   }
 }
@@ -101,7 +102,7 @@ export async function attachPaymentMethod(
   setAsDefault: boolean = true
 ): Promise<boolean> {
   if (!stripe) {
-    console.error('Stripe is not configured')
+    logger.warn('Stripe is not configured')
     return false
   }
 
@@ -120,10 +121,10 @@ export async function attachPaymentMethod(
       })
     }
 
-    console.log('Payment method attached to customer:', customerId)
+    logger.info({ customerId, paymentMethodId }, 'Payment method attached to customer')
     return true
   } catch (error) {
-    console.error('Error attaching payment method:', error)
+    logger.error({ error, customerId, paymentMethodId }, 'Error attaching payment method')
     return false
   }
 }
@@ -136,7 +137,7 @@ export async function listCustomerPaymentMethods(
   type: 'card' | 'us_bank_account' = 'card'
 ): Promise<Stripe.PaymentMethod[]> {
   if (!stripe) {
-    console.error('Stripe is not configured')
+    logger.warn('Stripe is not configured')
     return []
   }
 
@@ -147,7 +148,7 @@ export async function listCustomerPaymentMethods(
     })
     return paymentMethods.data
   } catch (error) {
-    console.error('Error listing payment methods:', error)
+    logger.error({ error, customerId }, 'Error listing payment methods')
     return []
   }
 }
@@ -157,16 +158,16 @@ export async function listCustomerPaymentMethods(
  */
 export async function detachPaymentMethod(paymentMethodId: string): Promise<boolean> {
   if (!stripe) {
-    console.error('Stripe is not configured')
+    logger.warn('Stripe is not configured')
     return false
   }
 
   try {
     await stripe.paymentMethods.detach(paymentMethodId)
-    console.log('Payment method detached:', paymentMethodId)
+    logger.info({ paymentMethodId }, 'Payment method detached')
     return true
   } catch (error) {
-    console.error('Error detaching payment method:', error)
+    logger.error({ error, paymentMethodId }, 'Error detaching payment method')
     return false
   }
 }
@@ -179,7 +180,7 @@ export async function getCustomerSubscriptions(
   status?: 'active' | 'past_due' | 'canceled' | 'all'
 ): Promise<Stripe.Subscription[]> {
   if (!stripe) {
-    console.error('Stripe is not configured')
+    logger.warn('Stripe is not configured')
     return []
   }
 
@@ -196,7 +197,7 @@ export async function getCustomerSubscriptions(
     const subscriptions = await stripe.subscriptions.list(params)
     return subscriptions.data
   } catch (error) {
-    console.error('Error listing subscriptions:', error)
+    logger.error({ error, customerId }, 'Error listing subscriptions')
     return []
   }
 }
@@ -209,7 +210,7 @@ export async function cancelSubscription(
   immediately: boolean = false
 ): Promise<Stripe.Subscription | null> {
   if (!stripe) {
-    console.error('Stripe is not configured')
+    logger.warn('Stripe is not configured')
     return null
   }
 
@@ -226,10 +227,10 @@ export async function cancelSubscription(
       })
     }
 
-    console.log('Subscription canceled:', subscriptionId)
+    logger.info({ subscriptionId }, 'Subscription canceled')
     return subscription
   } catch (error) {
-    console.error('Error canceling subscription:', error)
+    logger.error({ error, subscriptionId }, 'Error canceling subscription')
     return null
   }
 }
@@ -243,7 +244,7 @@ export async function createCustomerPortalSession(
   returnUrl: string
 ): Promise<string | null> {
   if (!stripe) {
-    console.error('Stripe is not configured')
+    logger.warn('Stripe is not configured')
     return null
   }
 
@@ -255,7 +256,7 @@ export async function createCustomerPortalSession(
 
     return session.url
   } catch (error) {
-    console.error('Error creating customer portal session:', error)
+    logger.error({ error, customerId }, 'Error creating customer portal session')
     return null
   }
 }
@@ -265,7 +266,7 @@ export async function createCustomerPortalSession(
  */
 export async function getCustomerTotalDonations(customerId: string): Promise<number> {
   if (!stripe) {
-    console.error('Stripe is not configured')
+    logger.warn('Stripe is not configured')
     return 0
   }
 
@@ -282,7 +283,7 @@ export async function getCustomerTotalDonations(customerId: string): Promise<num
 
     return total / 100 // Convert from cents to dollars
   } catch (error) {
-    console.error('Error calculating total donations:', error)
+    logger.error({ error, customerId }, 'Error calculating total donations')
     return 0
   }
 }

@@ -4,6 +4,8 @@ import "./globals.css"
 import { Header } from "@/components/layout/Header"
 import { Footer } from "@/components/layout/Footer"
 import { ScrollToTop } from "@/components/ui/ScrollToTop"
+import { ToastProvider } from "@/components/ui/toast"
+import { ErrorBoundary } from "@/components/ErrorBoundary"
 import { getMinistries } from "@/lib/cms/queries"
 
 const inter = Inter({ subsets: ["latin"] })
@@ -61,16 +63,20 @@ export default async function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <a
-          href="#main-content"
-          className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-md focus:bg-primary focus:px-4 focus:py-2 focus:text-primary-foreground"
-        >
-          Skip to main content
-        </a>
-        <Header ministries={ministries} />
-        <main id="main-content" className="min-h-screen">{children}</main>
-        <Footer />
-        <ScrollToTop />
+        <ErrorBoundary>
+          <ToastProvider>
+            <a
+              href="#main-content"
+              className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-md focus:bg-primary focus:px-4 focus:py-2 focus:text-primary-foreground"
+            >
+              Skip to main content
+            </a>
+            <Header ministries={ministries} />
+            <main id="main-content" className="min-h-screen">{children}</main>
+            <Footer />
+            <ScrollToTop />
+          </ToastProvider>
+        </ErrorBoundary>
       </body>
     </html>
   )
