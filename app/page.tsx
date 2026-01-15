@@ -15,6 +15,7 @@ import { Calendar, ArrowRight, Heart } from "lucide-react"
 import { getPastors, getMinistries, getEvents, getTestimonials, getLatestSermon } from "@/lib/cms/queries"
 import { parseEventDateTime, generateRecurringEvents } from "@/lib/utils/serviceTimes"
 import { END_OF_DAY_HOUR, END_OF_DAY_MINUTE, END_OF_DAY_SECOND, END_OF_DAY_MILLISECOND } from "@/lib/constants"
+import type { Event } from "@/lib/cms/types"
 
 export default async function HomePage() {
   const [pastors, ministries, events, testimonials, latestSermon] = await Promise.all([
