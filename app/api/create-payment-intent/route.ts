@@ -36,6 +36,9 @@ export async function POST(request: NextRequest) {
     )
   }
 
+  // At this point, stripe is guaranteed to be non-null
+  const stripeInstance = stripe
+
   try {
     // Parse and validate request body
     const body = await request.json()
@@ -52,7 +55,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Create Payment Intent
-    const paymentIntent = await stripe.paymentIntents.create({
+    const paymentIntent = await stripeInstance.paymentIntents.create({
       amount: amountInCents,
       currency: 'usd',
       description: `Church Donation - ${purpose || 'Offering'}`,

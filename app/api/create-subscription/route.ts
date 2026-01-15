@@ -53,6 +53,9 @@ export async function POST(request: NextRequest) {
     )
   }
 
+  // At this point, stripe is guaranteed to be non-null
+  const stripeInstance = stripe
+
   try {
     // Parse and validate request body
     const body = await request.json()
@@ -72,7 +75,7 @@ export async function POST(request: NextRequest) {
     const intervalCount = 1
 
     // Create or retrieve price
-    const price = await stripe.prices.create({
+    const price = await stripeInstance.prices.create({
       unit_amount: amountInCents,
       currency: 'usd',
       recurring: {
@@ -92,7 +95,7 @@ export async function POST(request: NextRequest) {
       (origin && allowedOrigins.includes(origin) ? origin : 'http://localhost:3000')
 
     // Create checkout session for subscription
-    const session = await stripe.checkout.sessions.create({
+    const session = await stripeInstance.checkout.sessions.create({
       payment_method_types: ['card'],
       line_items: [
         {

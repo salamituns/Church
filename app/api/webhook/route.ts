@@ -57,6 +57,10 @@ export async function POST(request: NextRequest) {
     )
   }
 
+  // At this point, stripe and webhookSecret are guaranteed to be non-null
+  const stripeInstance = stripe
+  const webhookSecretValue = webhookSecret
+
   const body = await request.text()
   const signature = request.headers.get('stripe-signature')
 
@@ -70,7 +74,7 @@ export async function POST(request: NextRequest) {
   let event: Stripe.Event
 
   try {
-    event = stripe.webhooks.constructEvent(body, signature, webhookSecret)
+    event = stripeInstance.webhooks.constructEvent(body, signature, webhookSecretValue)
   } catch (err) {
     // Log generic error to avoid information leakage
     logger.error('Webhook signature verification failed')
@@ -116,15 +120,15 @@ export async function POST(request: NextRequest) {
         break
 
       case 'invoice.payment_succeeded':
-        await handleInvoicePaymentSucceeded(event.data.object as Stripe.Invoice)
+        await handleInvoicePaymentSucceeded(event.data.object as Stripe.Invoice, stripeInstance)
         break
 
       case 'invoice.payment_failed':
-        await handleInvoicePaymentFailed(event.data.object as Stripe.Invoice)
+        await handleInvoicePaymentFailed(event.data.object as Stripe.Invoice, stripeInstance)
         break
 
       case 'charge.refunded':
-        await handleChargeRefunded(event.data.object as Stripe.Charge)
+        await handleChargeRefunded(event.data.object as Stripe.Charge, stripeInstance)
         break
 
       default:
@@ -354,7 +358,7 @@ async function handleCheckoutSessionCompleted(session: Stripe.Checkout.Session) 
   // No action needed here as subscription.created handles the main logic
 }
 
-async function handleInvoicePaymentSucceeded(invoice: Stripe.Invoice) {
+async function handleInvoicePaymentSucceeded(invoice: Stripe.Invoice, stripeInstance: Stripe) {
   // This fires for recurring subscription payments
   // Type assertion: subscription and charge are expandable fields in Stripe invoices
   const invoiceAny = invoice as any
@@ -381,7 +385,7 @@ async function handleInvoicePaymentSucceeded(invoice: Stripe.Invoice) {
   })
 
   // Get subscription to find donor info
-  const subscription = await stripe.subscriptions.retrieve(subscriptionId).catch(() => null)
+  const subscription = await stripeInstance.subscriptions.retrieve(subscriptionId).catch(() => null)
   const metadata = subscription?.metadata || {}
   const donorEmail = metadata.email || invoice.customer_email || ''
   const donorName = metadata.name || 'Anonymous'
@@ -405,7 +409,7 @@ async function handleInvoicePaymentSucceeded(invoice: Stripe.Invoice) {
   }
 }
 
-async function handleInvoicePaymentFailed(invoice: Stripe.Invoice) {
+async function handleInvoicePaymentFailed(invoice: Stripe.Invoice, stripeInstance: Stripe) {
   // Type assertion: subscription is an expandable field in Stripe invoices
   const invoiceAny = invoice as any
   const subscriptionId = typeof invoiceAny.subscription === 'string' 
@@ -431,7 +435,7 @@ async function handleInvoicePaymentFailed(invoice: Stripe.Invoice) {
   })
 
   // Get subscription to find donor info
-  const subscription = await stripe.subscriptions.retrieve(subscriptionId).catch(() => null)
+  const subscription = await stripeInstance.subscriptions.retrieve(subscriptionId).catch(() => null)
   const metadata = subscription?.metadata || {}
   const donorEmail = metadata.email || invoice.customer_email || ''
   const donorName = metadata.name || 'Anonymous'
@@ -447,7 +451,7 @@ async function handleInvoicePaymentFailed(invoice: Stripe.Invoice) {
   }
 }
 
-async function handleChargeRefunded(charge: Stripe.Charge) {
+async function handleChargeRefunded(charge: Stripe.Charge, stripeInstance: Stripe) {
   const refundAmount = charge.amount_refunded / 100
   const paymentIntentId = typeof charge.payment_intent === 'string' ? charge.payment_intent : charge.payment_intent?.id || ''
 
@@ -460,7 +464,7 @@ async function handleChargeRefunded(charge: Stripe.Charge) {
   })
 
   // Get payment intent to find donor info
-  const paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId).catch(() => null)
+  const paymentIntent = await stripeInstance.paymentIntents.retrieve(paymentIntentId).catch(() => null)
   const metadata = paymentIntent?.metadata || {}
   const donorEmail = metadata.email || paymentIntent?.receipt_email || ''
   const donorName = metadata.name || 'Anonymous'
