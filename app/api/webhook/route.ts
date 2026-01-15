@@ -251,6 +251,9 @@ async function handleSubscriptionCreated(subscription: Stripe.Subscription) {
   const stripePriceId = subscription.items.data[0]?.price.id || ''
 
   // Save to database
+  // Type assertion: current_period_start and current_period_end are required fields in Stripe subscriptions
+  const periodStart = (subscription as any).current_period_start ?? subscription.created
+  const periodEnd = (subscription as any).current_period_end ?? subscription.created
   await saveSubscription({
     stripeSubscriptionId: subscription.id,
     stripeCustomerId,
@@ -263,8 +266,8 @@ async function handleSubscriptionCreated(subscription: Stripe.Subscription) {
     message: metadata.message || '',
     purpose: metadata.purpose || 'Offering',
     status: subscription.status,
-    currentPeriodStart: new Date(subscription.current_period_start * 1000),
-    currentPeriodEnd: new Date(subscription.current_period_end * 1000),
+    currentPeriodStart: new Date(periodStart * 1000),
+    currentPeriodEnd: new Date(periodEnd * 1000),
   })
 
   // Send welcome email
@@ -288,11 +291,14 @@ async function handleSubscriptionCreated(subscription: Stripe.Subscription) {
 
 async function handleSubscriptionUpdated(subscription: Stripe.Subscription) {
   // Update database
+  // Type assertion: current_period_start and current_period_end are required fields in Stripe subscriptions
+  const periodStart = (subscription as any).current_period_start
+  const periodEnd = (subscription as any).current_period_end
   await updateSubscription({
     stripeSubscriptionId: subscription.id,
     status: subscription.status,
-    currentPeriodStart: new Date(subscription.current_period_start * 1000),
-    currentPeriodEnd: new Date(subscription.current_period_end * 1000),
+    currentPeriodStart: periodStart ? new Date(periodStart * 1000) : undefined,
+    currentPeriodEnd: periodEnd ? new Date(periodEnd * 1000) : undefined,
   })
 
   // Handle subscription status changes
