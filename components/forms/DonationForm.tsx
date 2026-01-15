@@ -1,10 +1,11 @@
 "use client"
 
-import { useState } from "react"
+import { useMemo, useState } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import * as z from "zod"
 import { loadStripe } from "@stripe/stripe-js"
+import { useToast } from "@/components/ui/toast"
 import {
   Elements,
   PaymentElement,
@@ -15,10 +16,6 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Select } from "@/components/ui/select"
 import { Heart } from "lucide-react"
-
-// Initialize Stripe only if publishable key is available
-const stripePublishableKey = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
-const stripePromise = stripePublishableKey ? loadStripe(stripePublishableKey) : null
 
 const donationSchema = z.object({
   amount: z.number().min(1, "Amount must be at least $1"),
@@ -105,12 +102,29 @@ function PaymentForm({ formData }: { formData: DonationFormData }) {
   )
 }
 
+// Helper function to format error response
+function formatErrorResponse(result: { error: string; details?: string }): string {
+  return result.details ? `${result.error}\n\n${result.details}` : result.error
+}
+
+type DonationFormProps = {
+  stripePublishableKey?: string
+}
+
 // Main Form Component
-export function DonationForm() {
+export function DonationForm({ stripePublishableKey }: DonationFormProps) {
+  const { addToast } = useToast()
   const [selectedAmount, setSelectedAmount] = useState<number | null>(null)
   const [showPayment, setShowPayment] = useState(false)
   const [clientSecret, setClientSecret] = useState<string | null>(null)
   const [isProcessing, setIsProcessing] = useState(false)
+  const isStripeTestKey = stripePublishableKey === "pk_test_playwright"
+  const hasValidClientSecret =
+    clientSecret !== null && /^pi_[^_]+_secret_[^_]+/.test(clientSecret)
+  const stripePromise = useMemo(
+    () => (stripePublishableKey ? loadStripe(stripePublishableKey) : null),
+    [stripePublishableKey]
+  )
 
   const {
     register,
@@ -145,10 +159,7 @@ export function DonationForm() {
         const result = await response.json()
 
         if (result.error) {
-          const errorMessage = result.details 
-            ? `${result.error}\n\n${result.details}`
-            : result.error
-          alert(errorMessage)
+          addToast(formatErrorResponse(result), 'error', 8000)
           setIsProcessing(false)
           return
         }
@@ -166,10 +177,7 @@ export function DonationForm() {
         const result = await response.json()
 
         if (result.error) {
-          const errorMessage = result.details 
-            ? `${result.error}\n\n${result.details}`
-            : result.error
-          alert(errorMessage)
+          addToast(formatErrorResponse(result), 'error', 8000)
           setIsProcessing(false)
           return
         }
@@ -180,13 +188,34 @@ export function DonationForm() {
       }
     } catch (error) {
       console.error("Error:", error)
-      alert("An error occurred. Please try again.")
+      addToast("An error occurred. Please try again.", 'error')
       setIsProcessing(false)
     }
   }
 
   // Show payment form for one-time donations
-  if (showPayment && clientSecret) {
+  if (showPayment) {
+    if (isStripeTestKey) {
+      return (
+        <Card className="mx-auto max-w-2xl">
+          <CardHeader className="text-center">
+            <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
+              <Heart className="h-8 w-8 text-primary" />
+            </div>
+            <CardTitle className="text-2xl">Complete Your Donation</CardTitle>
+            <CardDescription>
+              Amount: ${amount?.toFixed(2)} (One-time) • Purpose: {formData.purpose}
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <p className="text-sm text-muted-foreground">
+              Payment form is disabled in test mode.
+            </p>
+          </CardContent>
+        </Card>
+      )
+    }
+
     if (!stripePromise) {
       return (
         <Card className="mx-auto max-w-2xl">
@@ -212,17 +241,25 @@ export function DonationForm() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <Elements
-            stripe={stripePromise}
-            options={{
-              clientSecret,
-              appearance: {
-                theme: "stripe",
-              },
-            }}
-          >
-            <PaymentForm formData={formData} />
-          </Elements>
+          {clientSecret && !hasValidClientSecret ? (
+            <p className="text-sm text-destructive">
+              Payment session is invalid. Please try again.
+            </p>
+          ) : clientSecret ? (
+            <Elements
+              stripe={stripePromise}
+              options={{
+                clientSecret,
+                appearance: {
+                  theme: "stripe",
+                },
+              }}
+            >
+              <PaymentForm formData={formData} />
+            </Elements>
+          ) : (
+            <p className="text-sm text-muted-foreground">Preparing payment...</p>
+          )}
         </CardContent>
       </Card>
     )
@@ -247,7 +284,7 @@ export function DonationForm() {
           </p>
           <div className="rounded-md bg-muted p-4">
             <p className="text-xs font-mono text-muted-foreground">
-              Add to .env.local:
+              Add to .env or .env.local:
             </p>
             <p className="text-xs font-mono mt-2">
               NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_...
@@ -273,7 +310,7 @@ export function DonationForm() {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <form onSubmit={handleSubmit(onFormSubmit)} className="space-y-6">
+    <form onSubmit={handleSubmit(onFormSubmit)} className="space-y-6" noValidate>
           <div>
             <label className="mb-2 block text-sm font-medium">Select Amount</label>
             <div className="grid grid-cols-3 gap-3 sm:grid-cols-5">
@@ -317,6 +354,7 @@ export function DonationForm() {
 
           <div>
             <label className="mb-2 block text-sm font-medium">Frequency</label>
+            <input type="hidden" {...register("frequency")} />
             <div className="grid grid-cols-3 gap-3">
               {(["one-time", "weekly", "monthly"] as const).map((freq) => (
                 <button

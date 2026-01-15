@@ -7,17 +7,10 @@ import * as z from "zod"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Send } from "lucide-react"
+import { contactFormSchema } from "@/lib/validations/contact"
+import { useToast } from "@/components/ui/toast"
 
-const contactSchema = z.object({
-  name: z.string().min(2, "Name is required"),
-  email: z.string().email("Invalid email address"),
-  phone: z.string().optional(),
-  subject: z.string().min(3, "Subject is required"),
-  message: z.string().min(10, "Message must be at least 10 characters"),
-  type: z.enum(["general", "prayer", "visitor"]).default("general"),
-})
-
-type ContactFormData = z.infer<typeof contactSchema>
+type ContactFormData = z.infer<typeof contactFormSchema>
 
 interface ContactFormProps {
   type?: "general" | "prayer" | "visitor"
@@ -30,6 +23,7 @@ export function ContactForm({
   title = "Get in Touch",
   description = "We'd love to hear from you. Send us a message and we'll respond as soon as possible.",
 }: ContactFormProps) {
+  const { addToast } = useToast()
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isSuccess, setIsSuccess] = useState(false)
 
@@ -39,7 +33,7 @@ export function ContactForm({
     reset,
     formState: { errors },
   } = useForm<ContactFormData>({
-    resolver: zodResolver(contactSchema),
+    resolver: zodResolver(contactFormSchema),
     defaultValues: {
       type,
     },
@@ -48,21 +42,29 @@ export function ContactForm({
   const onSubmit = async (data: ContactFormData) => {
     setIsSubmitting(true)
     try {
-      // TODO: Integrate with email service (SendGrid, Resend, etc.)
-      // For now, this is a placeholder
-      console.log("Sending message:", data)
-      
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1500))
-      
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      })
+
+      const result = await response.json()
+
+      if (!response.ok) {
+        throw new Error(result.error || result.details || 'Failed to send message')
+      }
+
       setIsSuccess(true)
       reset()
-      
+
       // Reset success message after 5 seconds
       setTimeout(() => setIsSuccess(false), 5000)
     } catch (error) {
-      console.error("Contact form error:", error)
-      alert("There was an error sending your message. Please try again.")
+      const errorMessage =
+        error instanceof Error ? error.message : 'There was an error sending your message. Please try again.'
+      addToast(errorMessage, 'error', 8000)
     } finally {
       setIsSubmitting(false)
     }
@@ -91,7 +93,7 @@ export function ContactForm({
         <CardDescription className="text-lg">{description}</CardDescription>
       </CardHeader>
       <CardContent>
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6" noValidate>
           <div className="grid gap-6 sm:grid-cols-2">
             <div>
               <label className="mb-2 block text-sm font-medium">Name *</label>

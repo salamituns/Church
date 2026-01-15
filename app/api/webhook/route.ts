@@ -1,14 +1,65 @@
 import { NextRequest, NextResponse } from 'next/server'
 import Stripe from 'stripe'
 import { stripe, webhookSecret, isStripeConfigured, isWebhookConfigured } from '@/lib/stripe'
+import { logger } from '@/lib/logger'
+import { webhookRateLimiter, getClientIP, checkRateLimit } from '@/lib/ratelimit'
+import {
+  saveOneTimeDonation,
+  updateDonationStatus,
+  recordRefund,
+  saveSubscription,
+  updateSubscription,
+  updateSubscriptionPaymentStatus,
+  recordRecurringPayment,
+  isEventProcessed,
+  markEventProcessed,
+  createAdminNotification,
+} from '@/lib/db/donations'
+import {
+  sendDonationConfirmationEmail,
+  sendPaymentFailureEmail,
+  sendSubscriptionWelcomeEmail,
+  sendRecurringPaymentReceipt,
+  sendRecurringPaymentFailureEmail,
+  sendSubscriptionCanceledEmail,
+  sendRefundConfirmationEmail,
+  sendAdminNotification,
+  sendAdminAlert,
+} from '@/lib/email/notifications'
 
 export async function POST(request: NextRequest) {
+  // Rate limiting
+  const clientIP = getClientIP(request)
+  const rateLimitResult = await checkRateLimit(webhookRateLimiter, clientIP)
+  if (!rateLimitResult.success) {
+    logger.warn({ clientIP, limit: rateLimitResult.limit }, 'Rate limit exceeded for webhook')
+    return NextResponse.json(
+      {
+        error: 'Too many requests. Please try again later.',
+        retryAfter: Math.ceil((rateLimitResult.reset - Date.now()) / 1000),
+      },
+      {
+        status: 429,
+        headers: {
+          'Retry-After': Math.ceil((rateLimitResult.reset - Date.now()) / 1000).toString(),
+          'X-RateLimit-Limit': rateLimitResult.limit.toString(),
+          'X-RateLimit-Remaining': rateLimitResult.remaining.toString(),
+          'X-RateLimit-Reset': rateLimitResult.reset.toString(),
+        },
+      }
+    )
+  }
+
   if (!isStripeConfigured() || !stripe || !isWebhookConfigured() || !webhookSecret) {
     return NextResponse.json(
       { error: 'Stripe webhook is not configured. Please add STRIPE_WEBHOOK_SECRET to your environment variables.' },
       { status: 500 }
     )
   }
+
+  // At this point, stripe and webhookSecret are guaranteed to be non-null
+  const stripeInstance = stripe
+  const webhookSecretValue = webhookSecret
 
   const body = await request.text()
   const signature = request.headers.get('stripe-signature')
@@ -23,16 +74,25 @@ export async function POST(request: NextRequest) {
   let event: Stripe.Event
 
   try {
-    event = stripe.webhooks.constructEvent(body, signature, webhookSecret)
+    event = stripeInstance.webhooks.constructEvent(body, signature, webhookSecretValue)
   } catch (err) {
-    console.error('Webhook signature verification failed:', err)
+    // Log generic error to avoid information leakage
+    logger.error('Webhook signature verification failed')
     return NextResponse.json(
       { error: 'Webhook signature verification failed' },
       { status: 400 }
     )
   }
 
+  // Check if event was already processed (idempotency)
+  const alreadyProcessed = await isEventProcessed(event.id)
+  if (alreadyProcessed) {
+    return NextResponse.json({ received: true, message: 'Event already processed' })
+  }
+
   // Handle different event types
+  let processingError: string | undefined
+
   try {
     switch (event.type) {
       case 'payment_intent.succeeded':
@@ -60,24 +120,51 @@ export async function POST(request: NextRequest) {
         break
 
       case 'invoice.payment_succeeded':
-        await handleInvoicePaymentSucceeded(event.data.object as Stripe.Invoice)
+        await handleInvoicePaymentSucceeded(event.data.object as Stripe.Invoice, stripeInstance)
         break
 
       case 'invoice.payment_failed':
-        await handleInvoicePaymentFailed(event.data.object as Stripe.Invoice)
+        await handleInvoicePaymentFailed(event.data.object as Stripe.Invoice, stripeInstance)
         break
 
       case 'charge.refunded':
-        await handleChargeRefunded(event.data.object as Stripe.Charge)
+        await handleChargeRefunded(event.data.object as Stripe.Charge, stripeInstance)
         break
 
       default:
-        console.log(`Unhandled event type: ${event.type}`)
+        // Log unhandled events for monitoring but don't treat as errors
+        logger.debug({ eventType: event.type, eventId: event.id }, 'Unhandled webhook event type')
     }
+
+    // Mark event as successfully processed
+    await markEventProcessed(event.id, event.type, event.data, undefined)
 
     return NextResponse.json({ received: true })
   } catch (error) {
-    console.error('Error processing webhook:', error)
+    // Log generic error message to avoid information leakage
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error'
+    logger.error({ 
+      eventType: event.type, 
+      eventId: event.id,
+      error: errorMessage,
+    }, 'Error processing webhook event')
+    processingError = errorMessage
+
+    // Mark event as processed with error
+    await markEventProcessed(event.id, event.type, event.data, errorMessage).catch(() => {
+      // If marking fails, log but don't throw
+      logger.error({ eventId: event.id }, 'Failed to mark event as processed')
+    })
+
+    // Send admin alert for critical errors
+    await sendAdminAlert({
+      type: 'webhook-error',
+      message: `Failed to process webhook event: ${event.type}`,
+      details: { eventId: event.id, eventType: event.type },
+    }).catch(() => {
+      // Don't fail if alert sending fails
+    })
+
     // Return 200 to acknowledge receipt even if processing failed
     // This prevents Stripe from retrying if our business logic has issues
     return NextResponse.json({ received: true, error: 'Processing failed' }, { status: 200 })
@@ -86,221 +173,318 @@ export async function POST(request: NextRequest) {
 
 // Webhook event handlers
 async function handlePaymentIntentSucceeded(paymentIntent: Stripe.PaymentIntent) {
-  console.log('✅ Payment succeeded:', paymentIntent.id)
-
   const metadata = paymentIntent.metadata
   const amount = paymentIntent.amount / 100 // Convert from cents
-  const customerEmail = paymentIntent.receipt_email
+  const customerEmail = paymentIntent.receipt_email || undefined
+  const donorEmail = metadata.email || customerEmail || ''
+  const donorName = metadata.name || 'Anonymous'
 
-  // TODO: Save to database
-  // await saveOneTimeDonation({
-  //   stripePaymentIntentId: paymentIntent.id,
-  //   amount,
-  //   currency: paymentIntent.currency,
-  //   donorName: metadata.name,
-  //   donorEmail: metadata.email || customerEmail || '',
-  //   message: metadata.message || '',
-  //   purpose: metadata.purpose || 'Offering',
-  //   status: 'succeeded',
-  //   createdAt: new Date(paymentIntent.created * 1000),
-  // })
+  // Save to database
+  await saveOneTimeDonation({
+    stripePaymentIntentId: paymentIntent.id,
+    stripeCustomerId: typeof paymentIntent.customer === 'string' ? paymentIntent.customer : undefined,
+    stripeChargeId: typeof paymentIntent.latest_charge === 'string' ? paymentIntent.latest_charge : undefined,
+    amount,
+    currency: paymentIntent.currency,
+    donorName,
+    donorEmail,
+    message: metadata.message || '',
+    purpose: metadata.purpose || 'Offering',
+    status: 'succeeded',
+    createdAt: new Date(paymentIntent.created * 1000),
+  })
 
-  // TODO: Send confirmation email
-  // await sendDonationConfirmationEmail({
-  //   to: metadata.email || customerEmail || '',
-  //   name: metadata.name,
-  //   amount,
-  //   purpose: metadata.purpose || 'Offering',
-  //   paymentIntentId: paymentIntent.id,
-  // })
+  // Send confirmation email
+  if (donorEmail) {
+    await sendDonationConfirmationEmail({
+      to: donorEmail,
+      name: donorName,
+      amount,
+      purpose: metadata.purpose || 'Offering',
+      paymentIntentId: paymentIntent.id,
+    })
+  }
 
-  // TODO: Send admin notification
-  // await sendAdminNotification({
-  //   type: 'one-time-donation',
-  //   amount,
-  //   donorName: metadata.name,
-  //   purpose: metadata.purpose,
-  // })
+  // Send admin notification
+  await sendAdminNotification({
+    type: 'one-time-donation',
+    amount,
+    donorName,
+    purpose: metadata.purpose || 'Offering',
+  })
 }
 
 async function handlePaymentIntentFailed(paymentIntent: Stripe.PaymentIntent) {
-  console.log('❌ Payment failed:', paymentIntent.id)
-
   const metadata = paymentIntent.metadata
-  const customerEmail = paymentIntent.receipt_email
+  const customerEmail = paymentIntent.receipt_email || undefined
   const errorMessage = paymentIntent.last_payment_error?.message || 'Unknown error'
+  const donorEmail = metadata.email || customerEmail || ''
+  const donorName = metadata.name || 'Anonymous'
 
-  // TODO: Update database
-  // await updateDonationStatus({
-  //   stripePaymentIntentId: paymentIntent.id,
-  //   status: 'failed',
-  //   errorMessage,
-  // })
+  // Update database
+  await updateDonationStatus(paymentIntent.id, 'failed', errorMessage)
 
-  // TODO: Send failure notification to customer
-  // await sendPaymentFailureEmail({
-  //   to: metadata.email || customerEmail || '',
-  //   name: metadata.name,
-  //   errorMessage,
-  // })
+  // Send failure notification to customer
+  if (donorEmail) {
+    await sendPaymentFailureEmail({
+      to: donorEmail,
+      name: donorName,
+      errorMessage,
+    })
+  }
 
-  // TODO: Alert admin of failed payment
-  // await sendAdminAlert({
-  //   type: 'payment-failed',
-  //   paymentIntentId: paymentIntent.id,
-  //   errorMessage,
-  // })
+  // Alert admin of failed payment
+  await sendAdminAlert({
+    type: 'payment-failed',
+    message: `Payment failed for ${donorName}`,
+    details: {
+      paymentIntentId: paymentIntent.id,
+      errorMessage,
+      donorEmail,
+    },
+  })
 }
 
 async function handleSubscriptionCreated(subscription: Stripe.Subscription) {
-  console.log('🔄 Subscription created:', subscription.id)
-
   const metadata = subscription.metadata
   const amount = subscription.items.data[0]?.price.unit_amount || 0
-  const interval = subscription.items.data[0]?.price.recurring?.interval
+  const interval = subscription.items.data[0]?.price.recurring?.interval || 'month'
+  const donorEmail = metadata.email || ''
+  const donorName = metadata.name || 'Anonymous'
+  const stripeCustomerId = typeof subscription.customer === 'string' ? subscription.customer : subscription.customer?.id || ''
+  const stripePriceId = subscription.items.data[0]?.price.id || ''
 
-  // TODO: Save to database
-  // await saveSubscription({
-  //   stripeSubscriptionId: subscription.id,
-  //   stripeCustomerId: subscription.customer as string,
-  //   amount: amount / 100,
-  //   interval: interval || 'month',
-  //   donorName: metadata.name,
-  //   donorEmail: metadata.email || '',
-  //   purpose: metadata.purpose || 'Offering',
-  //   status: subscription.status,
-  //   currentPeriodStart: new Date(subscription.current_period_start * 1000),
-  //   currentPeriodEnd: new Date(subscription.current_period_end * 1000),
-  // })
+  // Save to database
+  // Type assertion: current_period_start and current_period_end are required fields in Stripe subscriptions
+  const periodStart = (subscription as any).current_period_start ?? subscription.created
+  const periodEnd = (subscription as any).current_period_end ?? subscription.created
+  await saveSubscription({
+    stripeSubscriptionId: subscription.id,
+    stripeCustomerId,
+    stripePriceId,
+    amount: amount / 100,
+    currency: subscription.currency || 'usd',
+    interval: interval as 'week' | 'month' | 'year',
+    donorName,
+    donorEmail,
+    message: metadata.message || '',
+    purpose: metadata.purpose || 'Offering',
+    status: subscription.status,
+    currentPeriodStart: new Date(periodStart * 1000),
+    currentPeriodEnd: new Date(periodEnd * 1000),
+  })
 
-  // TODO: Send welcome email
-  // await sendSubscriptionWelcomeEmail({
-  //   to: metadata.email || '',
-  //   name: metadata.name,
-  //   amount: amount / 100,
-  //   interval,
-  // })
+  // Send welcome email
+  if (donorEmail) {
+    await sendSubscriptionWelcomeEmail({
+      to: donorEmail,
+      name: donorName,
+      amount: amount / 100,
+      interval,
+    })
+  }
+
+  // Send admin notification
+  await sendAdminNotification({
+    type: 'subscription',
+    donorName,
+    amount: amount / 100,
+    purpose: metadata.purpose || 'Offering',
+  })
 }
 
 async function handleSubscriptionUpdated(subscription: Stripe.Subscription) {
-  console.log('🔄 Subscription updated:', subscription.id)
-
-  // TODO: Update database
-  // await updateSubscription({
-  //   stripeSubscriptionId: subscription.id,
-  //   status: subscription.status,
-  //   currentPeriodStart: new Date(subscription.current_period_start * 1000),
-  //   currentPeriodEnd: new Date(subscription.current_period_end * 1000),
-  // })
+  // Update database
+  // Type assertion: current_period_start and current_period_end are required fields in Stripe subscriptions
+  const periodStart = (subscription as any).current_period_start
+  const periodEnd = (subscription as any).current_period_end
+  await updateSubscription({
+    stripeSubscriptionId: subscription.id,
+    status: subscription.status,
+    currentPeriodStart: periodStart ? new Date(periodStart * 1000) : undefined,
+    currentPeriodEnd: periodEnd ? new Date(periodEnd * 1000) : undefined,
+  })
 
   // Handle subscription status changes
   if (subscription.status === 'canceled' || subscription.status === 'incomplete_expired') {
-    // TODO: Send cancellation email
-    // await sendSubscriptionCanceledEmail({...})
+    const metadata = subscription.metadata
+    const donorEmail = metadata.email || ''
+    const donorName = metadata.name || 'Anonymous'
+
+    if (donorEmail) {
+      await sendSubscriptionCanceledEmail({
+        to: donorEmail,
+        name: donorName,
+      })
+    }
+
+    await sendAdminNotification({
+      type: 'subscription-canceled',
+      donorName,
+    })
   }
 }
 
 async function handleSubscriptionDeleted(subscription: Stripe.Subscription) {
-  console.log('🛑 Subscription canceled:', subscription.id)
-
   const metadata = subscription.metadata
+  const donorEmail = metadata.email || ''
+  const donorName = metadata.name || 'Anonymous'
 
-  // TODO: Update database
-  // await updateSubscription({
-  //   stripeSubscriptionId: subscription.id,
-  //   status: 'canceled',
-  //   canceledAt: new Date(),
-  // })
+  // Update database
+  await updateSubscription({
+    stripeSubscriptionId: subscription.id,
+    status: 'canceled',
+    canceledAt: new Date(),
+  })
 
-  // TODO: Send cancellation confirmation email
-  // await sendSubscriptionCanceledEmail({
-  //   to: metadata.email || '',
-  //   name: metadata.name,
-  // })
+  // Send cancellation confirmation email
+  if (donorEmail) {
+    await sendSubscriptionCanceledEmail({
+      to: donorEmail,
+      name: donorName,
+    })
+  }
 
-  // TODO: Notify admin
-  // await sendAdminNotification({
-  //   type: 'subscription-canceled',
-  //   subscriptionId: subscription.id,
-  // })
+  // Notify admin
+  await sendAdminNotification({
+    type: 'subscription-canceled',
+    donorName,
+  })
 }
 
 async function handleCheckoutSessionCompleted(session: Stripe.Checkout.Session) {
-  console.log('✅ Checkout session completed:', session.id)
-
   // For subscription checkouts, the subscription.created event will handle the logic
   // This is mainly for any additional processing needed
-
-  const metadata = session.metadata
-
-  // TODO: Log checkout completion
-  // await logCheckoutCompletion({
-  //   sessionId: session.id,
-  //   customerId: session.customer as string,
-  //   subscriptionId: session.subscription as string,
-  //   metadata,
-  // })
+  // No action needed here as subscription.created handles the main logic
 }
 
-async function handleInvoicePaymentSucceeded(invoice: Stripe.Invoice) {
-  console.log('💰 Invoice payment succeeded:', invoice.id)
-
+async function handleInvoicePaymentSucceeded(invoice: Stripe.Invoice, stripeInstance: Stripe) {
   // This fires for recurring subscription payments
-  const subscriptionId = (invoice as any).subscription as string
+  // Type assertion: subscription and charge are expandable fields in Stripe invoices
+  const invoiceAny = invoice as any
+  const subscriptionId = typeof invoiceAny.subscription === 'string' 
+    ? invoiceAny.subscription 
+    : invoiceAny.subscription?.id || ''
   const amount = invoice.amount_paid / 100
+  const chargeId = typeof invoiceAny.charge === 'string' 
+    ? invoiceAny.charge 
+    : invoiceAny.charge?.id || undefined
+  const paidAt = invoiceAny.status_transitions?.paid_at
+    ? new Date(invoiceAny.status_transitions.paid_at * 1000)
+    : new Date()
 
-  // TODO: Record recurring payment
-  // await recordRecurringPayment({
-  //   stripeInvoiceId: invoice.id,
-  //   stripeSubscriptionId: subscriptionId,
-  //   amount,
-  //   paidAt: new Date(invoice.status_transitions.paid_at! * 1000),
-  // })
+  // Record recurring payment
+  await recordRecurringPayment({
+    stripeInvoiceId: invoice.id,
+    stripeSubscriptionId: subscriptionId,
+    stripeChargeId: chargeId,
+    amount,
+    currency: invoice.currency || 'usd',
+    status: 'paid',
+    paidAt,
+  })
 
-  // TODO: Send receipt email
-  // await sendRecurringPaymentReceipt({
-  //   invoiceId: invoice.id,
-  //   amount,
-  // })
+  // Get subscription to find donor info
+  const subscription = await stripeInstance.subscriptions.retrieve(subscriptionId).catch(() => null)
+  const metadata = subscription?.metadata || {}
+  const donorEmail = metadata.email || invoice.customer_email || ''
+  const donorName = metadata.name || 'Anonymous'
+
+  // Calculate next payment date
+  // Type assertion: current_period_end is a required field in Stripe subscriptions
+  const subscriptionAny = subscription as any
+  const nextPaymentDate = subscriptionAny?.current_period_end
+    ? new Date(subscriptionAny.current_period_end * 1000)
+    : undefined
+
+  // Send receipt email
+  if (donorEmail) {
+    await sendRecurringPaymentReceipt({
+      to: donorEmail,
+      name: donorName,
+      amount,
+      invoiceId: invoice.id,
+      nextPaymentDate,
+    })
+  }
 }
 
-async function handleInvoicePaymentFailed(invoice: Stripe.Invoice) {
-  console.log('❌ Invoice payment failed:', invoice.id)
+async function handleInvoicePaymentFailed(invoice: Stripe.Invoice, stripeInstance: Stripe) {
+  // Type assertion: subscription is an expandable field in Stripe invoices
+  const invoiceAny = invoice as any
+  const subscriptionId = typeof invoiceAny.subscription === 'string' 
+    ? invoiceAny.subscription 
+    : invoiceAny.subscription?.id || ''
+  const failureReason = invoiceAny.last_finalization_error?.message || 'Payment failed'
 
-  const subscriptionId = (invoice as any).subscription as string
+  // Update subscription status
+  await updateSubscriptionPaymentStatus({
+    stripeSubscriptionId: subscriptionId,
+    lastPaymentFailed: true,
+    failureReason,
+  })
 
-  // TODO: Update subscription status
-  // await updateSubscriptionPaymentStatus({
-  //   stripeSubscriptionId: subscriptionId,
-  //   lastPaymentFailed: true,
-  //   failureReason: invoice.last_finalization_error?.message || 'Payment failed',
-  // })
+  // Record failed payment
+  await recordRecurringPayment({
+    stripeInvoiceId: invoice.id,
+    stripeSubscriptionId: subscriptionId,
+    amount: invoice.amount_due / 100,
+    currency: invoice.currency || 'usd',
+    status: 'failed',
+    failureMessage: failureReason,
+  })
 
-  // TODO: Send payment failure notification
-  // await sendRecurringPaymentFailureEmail({
-  //   invoiceId: invoice.id,
-  // })
+  // Get subscription to find donor info
+  const subscription = await stripeInstance.subscriptions.retrieve(subscriptionId).catch(() => null)
+  const metadata = subscription?.metadata || {}
+  const donorEmail = metadata.email || invoice.customer_email || ''
+  const donorName = metadata.name || 'Anonymous'
+
+  // Send payment failure notification
+  if (donorEmail) {
+    await sendRecurringPaymentFailureEmail({
+      to: donorEmail,
+      name: donorName,
+      errorMessage: failureReason,
+      invoiceId: invoice.id,
+    })
+  }
 }
 
-async function handleChargeRefunded(charge: Stripe.Charge) {
-  console.log('💸 Charge refunded:', charge.id)
-
+async function handleChargeRefunded(charge: Stripe.Charge, stripeInstance: Stripe) {
   const refundAmount = charge.amount_refunded / 100
-  const paymentIntentId = charge.payment_intent as string
+  const paymentIntentId = typeof charge.payment_intent === 'string' ? charge.payment_intent : charge.payment_intent?.id || ''
 
-  // TODO: Update database
-  // await recordRefund({
-  //   stripeChargeId: charge.id,
-  //   stripePaymentIntentId: paymentIntentId,
-  //   refundAmount,
-  //   refundedAt: new Date(),
-  // })
+  // Update database
+  await recordRefund({
+    stripeChargeId: charge.id,
+    stripePaymentIntentId: paymentIntentId,
+    refundAmount,
+    refundedAt: new Date(),
+  })
 
-  // TODO: Send refund confirmation
-  // await sendRefundConfirmationEmail({
-  //   chargeId: charge.id,
-  //   amount: refundAmount,
-  // })
+  // Get payment intent to find donor info
+  const paymentIntent = await stripeInstance.paymentIntents.retrieve(paymentIntentId).catch(() => null)
+  const metadata = paymentIntent?.metadata || {}
+  const donorEmail = metadata.email || paymentIntent?.receipt_email || ''
+  const donorName = metadata.name || 'Anonymous'
+
+  // Send refund confirmation
+  if (donorEmail) {
+    await sendRefundConfirmationEmail({
+      to: donorEmail,
+      name: donorName,
+      amount: refundAmount,
+      chargeId: charge.id,
+    })
+  }
+
+  // Notify admin
+  await sendAdminNotification({
+    type: 'refund',
+    donorName,
+    amount: refundAmount,
+  })
 }
 
 // Disable body parsing for webhook route

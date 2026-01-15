@@ -3,9 +3,11 @@ import Image from "next/image"
 import Link from "next/link"
 import { format } from "date-fns"
 import { getEvent, getEvents } from "@/lib/cms/queries"
+import { generateRecurringEvents } from "@/lib/utils/serviceTimes"
 import { Card, CardContent } from "@/components/ui/card"
 import { Calendar, Clock, MapPin, ExternalLink, ArrowLeft, ChevronRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import type { Event } from "@/lib/cms/types"
 
 interface PageProps {
   params: Promise<{ slug: string }>
@@ -39,16 +41,29 @@ export async function generateMetadata({ params }: PageProps) {
 
 export default async function EventPage({ params }: PageProps) {
   const { slug } = await params
-  const event = await getEvent(slug)
+  
+  // Check both static events and recurring events
+  const staticEvent = await getEvent(slug)
+  const recurringEvents = generateRecurringEvents(6)
+  const recurringEvent = recurringEvents.find((e) => e.slug === slug)
+  
+  const event = staticEvent || recurringEvent || null
 
   if (!event) {
     notFound()
   }
 
-  // Get other events for related events section
-  const allEvents = await getEvents()
+  // Get other events for related events section (including recurring)
+  const staticEvents = await getEvents()
+  const allEvents: Event[] = [...staticEvents, ...recurringEvents]
+  const now = new Date()
   const relatedEvents = allEvents
-    .filter((e) => e.slug !== slug && e.image)
+    .filter((e) => {
+      // Exclude current event, only include events with images, and only upcoming events
+      const eventDate = new Date(e.date)
+      eventDate.setHours(0, 0, 0, 0)
+      return e.slug !== slug && e.image && eventDate >= now
+    })
     .sort((a, b) => a.date.getTime() - b.date.getTime())
     .slice(0, 3)
 

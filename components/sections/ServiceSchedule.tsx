@@ -9,22 +9,22 @@ import Link from "next/link"
 
 const services = [
   {
-    day: "Sunday",
-    time: "10:00 AM",
+    day: "Every Sunday",
+    time: "9:20 AM",
     name: "Sunday Service",
     description: "Main worship service",
   },
   {
-    day: "Wednesday",
+    day: "Every Wednesday",
     time: "7:00 PM",
     name: "Digging Deep / Faith Clinic",
-    description: "Bible study and prayer",
+    description: "Bible study and prayer session",
   },
   {
-    day: "Last Sunday",
-    time: "10:00 AM",
-    name: "Anointing Service",
-    description: "Special service",
+    day: "1st Sunday",
+    time: "9:20 AM",
+    name: "Thanksgiving Service",
+    description: "Monthly thanksgiving celebration",
   },
 ]
 
