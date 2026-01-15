@@ -356,11 +356,17 @@ async function handleCheckoutSessionCompleted(session: Stripe.Checkout.Session) 
 
 async function handleInvoicePaymentSucceeded(invoice: Stripe.Invoice) {
   // This fires for recurring subscription payments
-  const subscriptionId = typeof invoice.subscription === 'string' ? invoice.subscription : invoice.subscription?.id || ''
+  // Type assertion: subscription and charge are expandable fields in Stripe invoices
+  const invoiceAny = invoice as any
+  const subscriptionId = typeof invoiceAny.subscription === 'string' 
+    ? invoiceAny.subscription 
+    : invoiceAny.subscription?.id || ''
   const amount = invoice.amount_paid / 100
-  const chargeId = typeof invoice.charge === 'string' ? invoice.charge : invoice.charge?.id || undefined
-  const paidAt = invoice.status_transitions.paid_at
-    ? new Date(invoice.status_transitions.paid_at * 1000)
+  const chargeId = typeof invoiceAny.charge === 'string' 
+    ? invoiceAny.charge 
+    : invoiceAny.charge?.id || undefined
+  const paidAt = invoiceAny.status_transitions?.paid_at
+    ? new Date(invoiceAny.status_transitions.paid_at * 1000)
     : new Date()
 
   // Record recurring payment
@@ -381,8 +387,10 @@ async function handleInvoicePaymentSucceeded(invoice: Stripe.Invoice) {
   const donorName = metadata.name || 'Anonymous'
 
   // Calculate next payment date
-  const nextPaymentDate = subscription?.current_period_end
-    ? new Date(subscription.current_period_end * 1000)
+  // Type assertion: current_period_end is a required field in Stripe subscriptions
+  const subscriptionAny = subscription as any
+  const nextPaymentDate = subscriptionAny?.current_period_end
+    ? new Date(subscriptionAny.current_period_end * 1000)
     : undefined
 
   // Send receipt email
@@ -398,8 +406,12 @@ async function handleInvoicePaymentSucceeded(invoice: Stripe.Invoice) {
 }
 
 async function handleInvoicePaymentFailed(invoice: Stripe.Invoice) {
-  const subscriptionId = typeof invoice.subscription === 'string' ? invoice.subscription : invoice.subscription?.id || ''
-  const failureReason = invoice.last_finalization_error?.message || 'Payment failed'
+  // Type assertion: subscription is an expandable field in Stripe invoices
+  const invoiceAny = invoice as any
+  const subscriptionId = typeof invoiceAny.subscription === 'string' 
+    ? invoiceAny.subscription 
+    : invoiceAny.subscription?.id || ''
+  const failureReason = invoiceAny.last_finalization_error?.message || 'Payment failed'
 
   // Update subscription status
   await updateSubscriptionPaymentStatus({
