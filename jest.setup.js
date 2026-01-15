@@ -23,8 +23,10 @@ jest.mock('next/navigation', () => ({
 }))
 
 // Mock environment variables
-process.env.NODE_ENV = 'test'
-process.env.STRIPE_SECRET_KEY = 'sk_test_mock_key'
-process.env.STRIPE_WEBHOOK_SECRET = 'whsec_mock_secret'
-process.env.RESEND_API_KEY = 're_mock_key'
-process.env.DATABASE_URL = 'postgresql://test:test@localhost:5432/test'
+// Note: NODE_ENV is already set to 'test' by Jest, no need to set it manually
+Object.assign(process.env, {
+  STRIPE_SECRET_KEY: 'sk_test_mock_key',
+  STRIPE_WEBHOOK_SECRET: 'whsec_mock_secret',
+  RESEND_API_KEY: 're_mock_key',
+  DATABASE_URL: 'postgresql://test:test@localhost:5432/test',
+})
